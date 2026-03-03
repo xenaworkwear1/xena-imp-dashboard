@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMP Dashboard — Xena Workwear</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0d0f;
+  --surface: #141518;
+  --surface2: #1c1e22;
+  --surface3: #252830;
+  --border: #2a2d34;
+  --border2: #363a44;
+  --accent: #e8c547;
+  --accent2: #f5a623;
+  --red: #ff4d4d;
+  --orange: #ff8c42;
+  --green: #3ecf8e;
+  --blue: #4da6ff;
+  --purple: #9b8afb;
+  --text: #e8eaed;
+  --text2: #9aa0ac;
+  --text3: #5c6270;
+  --font-head: 'Syne', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --font-body: 'Inter', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.top-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.logo span { color: var(--text3); font-weight: 400; margin-left: 8px; }
+.meta { font-family: var(--font-mono); font-size: 11px; color: var(--text3); text-align: right; }
+.meta strong { color: var(--text2); }
+
+/* LAYOUT */
+.container { max-width: 1400px; margin: 0 auto; padding: 24px 32px; }
+
+/* SECTIONS */
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.section:hover { box-shadow: 0 0 0 1px var(--border2); }
+
+.section-header {
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid transparent;
+  transition: background 0.15s;
+}
+.section-header:hover { background: var(--surface2); }
+.section.open .section-header { border-bottom-color: var(--border); }
+
+.section-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+  min-width: 20px;
+}
+.section-title {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex: 1;
+}
+.section-badges { display: flex; gap: 6px; align-items: center; }
+.badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+.badge-red { background: rgba(255,77,77,0.15); color: var(--red); border: 1px solid rgba(255,77,77,0.3); }
+.badge-orange { background: rgba(255,140,66,0.15); color: var(--orange); border: 1px solid rgba(255,140,66,0.3); }
+.badge-yellow { background: rgba(232,197,71,0.15); color: var(--accent); border: 1px solid rgba(232,197,71,0.3); }
+.badge-green { background: rgba(62,207,142,0.15); color: var(--green); border: 1px solid rgba(62,207,142,0.3); }
+.badge-blue { background: rgba(77,166,255,0.15); color: var(--blue); border: 1px solid rgba(77,166,255,0.3); }
+.badge-gray { background: rgba(255,255,255,0.05); color: var(--text3); border: 1px solid var(--border); }
+
+.chevron {
+  width: 16px; height: 16px;
+  color: var(--text3);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.section.open .chevron { transform: rotate(180deg); }
+
+.section-body { display: none; padding: 20px; }
+.section.open .section-body { display: block; }
+
+/* GRID for KPIs */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.kpi-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+}
+.kpi-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+.kpi-value {
+  font-family: var(--font-head);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+}
+.kpi-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+/* TABLES */
+.table-wrap { overflow-x: auto; border-radius: 6px; border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  background: var(--surface2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 9px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+thead th:hover { color: var(--text2); }
+thead th.sort-asc::after { content: " ↑"; color: var(--accent); }
+thead th.sort-desc::after { content: " ↓"; color: var(--accent); }
+tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--surface2); }
+tbody td { padding: 9px 12px; font-family: var(--font-mono); font-size: 11px; white-space: nowrap; }
+td.product-name { font-family: var(--font-body); font-size: 12px; white-space: normal; min-width: 180px; max-width: 260px; }
+
+/* Expand row for children */
+.expand-row { cursor: pointer; }
+.expand-row td:first-child::before {
+  content: "▶";
+  display: inline-block;
+  margin-right: 6px;
+  font-size: 8px;
+  color: var(--text3);
+  transition: transform 0.15s;
+  vertical-align: middle;
+}
+.expand-row.expanded td:first-child::before { transform: rotate(90deg); color: var(--accent); }
+
+.child-row { background: var(--bg) !important; }
+.child-row td { padding: 7px 12px 7px 28px; font-size: 11px; color: var(--text2); }
+.child-row:hover { background: var(--surface) !important; }
+
+/* STATUS PILLS */
+.status {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+.s-critical { background: rgba(255,77,77,0.15); color: var(--red); }
+.s-low { background: rgba(255,140,66,0.15); color: var(--orange); }
+.s-healthy { background: rgba(62,207,142,0.12); color: var(--green); }
+.s-watch { background: rgba(232,197,71,0.12); color: var(--accent); }
+.s-overstock { background: rgba(155,138,251,0.12); color: var(--purple); }
+.s-zero { background: rgba(255,255,255,0.05); color: var(--text3); }
+.s-novelocity { background: rgba(77,166,255,0.1); color: var(--blue); }
+.s-disc { background: rgba(255,77,77,0.2); color: var(--red); border: 1px solid rgba(255,77,77,0.4); }
+
+.slow-flag { color: var(--orange); font-size: 10px; margin-left: 4px; }
+
+/* ALERT BOX */
+.alert {
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border-left: 3px solid;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.alert-red { background: rgba(255,77,77,0.07); border-color: var(--red); color: var(--text2); }
+.alert-orange { background: rgba(255,140,66,0.07); border-color: var(--orange); color: var(--text2); }
+.alert-yellow { background: rgba(232,197,71,0.07); border-color: var(--accent); color: var(--text2); }
+.alert-blue { background: rgba(77,166,255,0.07); border-color: var(--blue); color: var(--text2); }
+.alert strong { color: var(--text); }
+
+/* EXEC SUMMARY */
+.exec-text {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text2);
+  max-width: 860px;
+}
+.exec-text strong { color: var(--accent); }
+
+/* LONGITUDINAL */
+.streak-bar { display: inline-flex; gap: 2px; vertical-align: middle; margin-left: 6px; }
+.streak-dot {
+  width: 8px; height: 8px; border-radius: 2px;
+  background: var(--border2);
+}
+.streak-dot.active { background: var(--orange); }
+.streak-dot.escalate { background: var(--red); }
+
+/* TWO-COL */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+/* SEARCH/FILTER */
+.filter-bar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+.filter-input {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+  outline: none;
+  width: 220px;
+}
+.filter-input:focus { border-color: var(--accent); }
+.filter-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 5px 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(232,197,71,0.07); }
+
+/* PO PILL */
+.po-pill {
+  background: rgba(62,207,142,0.1);
+  border: 1px solid rgba(62,207,142,0.3);
+  color: var(--green);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+/* SUBSECTION TITLE */
+.sub-title {
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin: 20px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.sub-title:first-child { margin-top: 0; }
+
+/* DIVIDER */
+.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+/* ANOMALY TABLE */
+.anomaly-row td { color: var(--accent); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* Collapse all button */
+.ctrl-bar { display: flex; gap: 8px; margin-bottom: 16px; }
+.ctrl-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 6px 14px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.04em;
+}
+.ctrl-btn:hover { border-color: var(--border2); color: var(--text2); }
+
+/* Supplier tag */
+.sup-tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+}
+.sup-china { background: rgba(77,166,255,0.12); color: var(--blue); }
+.sup-mexico { background: rgba(62,207,142,0.12); color: var(--green); }
+
+/* Disc flag */
+.disc-flag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--red);
+  background: rgba(255,77,77,0.1);
+  border: 1px solid rgba(255,77,77,0.3);
+  border-radius: 3px;
+  padding: 1px 5px;
+  margin-left: 6px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="logo">IMP <span>Inventory Management Pal</span></div>
+  <div class="meta">
+    <strong>XENA WORKWEAR</strong> &nbsp;|&nbsp; Week ending Feb 23, 2026<br>
+    Snapshot: Feb 23 &nbsp;·&nbsp; Forecast: Mar 1 &nbsp;·&nbsp; PO-0068 in pipeline &nbsp;·&nbsp; v2 Rules Applied
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="ctrl-bar">
+    <button class="ctrl-btn" onclick="expandAll()">EXPAND ALL</button>
+    <button class="ctrl-btn" onclick="collapseAll()">COLLAPSE ALL</button>
+    <button class="ctrl-btn" onclick="expandUrgent()">URGENT ONLY</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SECTION 1: EXECUTIVE SUMMARY -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section open" id="sec-1">
+    <div class="section-header" onclick="toggleSection('sec-1')">
+      <span class="section-num">01</span>
+      <span class="section-title">Executive Summary</span>
+      <div class="section-badges">
+        <span class="badge badge-red">3 DISC. CANDIDATES</span>
+        <span class="badge badge-orange">PO-0068 IN PIPELINE</span>
+      </div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="exec-text">
+        PO-0068 (964 pairs, $54,200) is in pipeline arriving approximately <strong>April 14</strong> and covers 33 Mexico SKUs across Omega, Spice, Gravity, Rogue, Horizon, and Valence. Despite this, <strong>57 Mexico SKUs remain at or below reorder point and uncovered</strong> — 848 pairs needed, with 18 in CRITICAL status. A supplemental Mexico PO is required immediately for CRITICAL SKUs not available in supplier finished goods inventory. The China reorder is smaller but equally time-sensitive: <strong>ASL-SO-060-BL1 at 1.9 weeks WOS</strong> needs to be on a PO this week. On the slow-mover front, three parent SKUs have reached full discontinuation escalation after 6 consecutive eligible months: <strong>Fusion v2 Black</strong> (272 units, $18,224 at risk), <strong>Rogue Soft White</strong>, and <strong>Rogue Soft Black</strong>. Four PO-0068 SKUs will still be LOW WOS at arrival and are flagged for the April add-on analysis. March historically runs 67% above February — the current stockout exposure is hitting at the worst possible time.
+      </div>
+      <hr class="divider">
+      <div class="alert alert-yellow">
+        <strong>⚠ Supplier inventory file date:</strong> Inv_021225 filename suggests Feb 12, <strong>2025</strong> — if accurate, disponible quantities are 12+ months old. Confirm before acting on April add-on figures.
+      </div>
+      <div class="alert alert-blue">
+        <strong>📋 GR-AM3 (Gravity Amber):</strong> 184 units on hand, zero velocity across all windows. Likely new colorway not yet live. Confirm status before assuming stockout or slow-mover.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SECTION 2: KPI SCORECARD -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section open" id="sec-2">
+    <div class="section-header" onclick="toggleSection('sec-2')">
+      <span class="section-num">02</span>
+      <span class="section-title">Weekly KPI Scorecard</span>
+      <div class="section-badges">
+        <span class="badge badge-gray">11,163 UNITS ON HAND</span>
+        <span class="badge badge-gray">386 SOLD</span>
+      </div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">On Hand — LA</div>
+          <div class="kpi-value" style="color:var(--blue)">7,922</div>
+          <div class="kpi-sub">units</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">On Hand — MIL</div>
+          <div class="kpi-value" style="color:var(--blue)">3,241</div>
+          <div class="kpi-sub">units</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Combined On Hand</div>
+          <div class="kpi-value" style="color:var(--text)">11,163</div>
+          <div class="kpi-sub">all footwear</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Inventory Value</div>
+          <div class="kpi-value" style="color:var(--accent); font-size:20px">$397,624</div>
+          <div class="kpi-sub">at cost</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Units Sold</div>
+          <div class="kpi-value" style="color:var(--green)">386</div>
+          <div class="kpi-sub">this week</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">CRITICAL SKUs</div>
+          <div class="kpi-value" style="color:var(--red)">31</div>
+          <div class="kpi-sub">&lt;4 wks WOS</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">LOW SKUs</div>
+          <div class="kpi-value" style="color:var(--orange)">53</div>
+          <div class="kpi-sub">4–8 wks WOS</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">OVERSTOCKED</div>
+          <div class="kpi-value" style="color:var(--purple)">140</div>
+          <div class="kpi-sub">above threshold</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Slow-Movers</div>
+          <div class="kpi-value" style="color:var(--orange)">90</div>
+          <div class="kpi-sub">child SKUs this week</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Disc. Candidates</div>
+          <div class="kpi-value" style="color:var(--red)">3</div>
+          <div class="kpi-sub">4+ month streak</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Watch SKUs</div>
+          <div class="kpi-value" style="color:var(--accent)">44</div>
+          <div class="kpi-sub">1–3 mo streak</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Zero Stock</div>
+          <div class="kpi-value" style="color:var(--text3)">108</div>
+          <div class="kpi-sub">child SKUs</div>
+        </div>
+      </div>
+
+      <div class="sub-title">Top Sellers — This Week</div>
+      <div class="table-wrap">
+        <table id="tbl-sellers">
+          <thead>
+            <tr>
+              <th onclick="sortTable('tbl-sellers',0)">Parent SKU</th>
+              <th onclick="sortTable('tbl-sellers',1)">Product</th>
+              <th onclick="sortTable('tbl-sellers',2)">Units Sold</th>
+              <th onclick="sortTable('tbl-sellers',3)">On Hand</th>
+              <th onclick="sortTable('tbl-sellers',4)">WOS</th>
+              <th onclick="sortTable('tbl-sellers',5)">Status</th>
+            </tr>
+          </thead>
+          <tbody id="sellers-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SECTION 3: LONGITUDINAL TREND SUMMARY -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section open" id="sec-3">
+    <div class="section-header" onclick="toggleSection('sec-3')">
+      <span class="section-num">03</span>
+      <span class="section-title">Longitudinal Trend Summary</span>
+      <div class="section-badges">
+        <span class="badge badge-red">3 ESCALATE</span>
+        <span class="badge badge-yellow">44 WATCH</span>
+        <span class="badge badge-gray">6-MO HISTORY</span>
+      </div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="alert alert-red">
+        <strong>No new escalations this week.</strong> All 3 discontinuation candidates (FN-BL2, RO-SO-WH1, RO-SO-BL1) were already at the escalation threshold. Full analysis in Section 4.
+      </div>
+
+      <div class="sub-title">Streak Leaders — Top Parents by Slow-Mover Child Count</div>
+      <div class="table-wrap">
+        <table id="tbl-streaks">
+          <thead>
+            <tr>
+              <th onclick="sortTable('tbl-streaks',0)">Parent SKU</th>
+              <th onclick="sortTable('tbl-streaks',1)">Product</th>
+              <th onclick="sortTable('tbl-streaks',2)">Slow / Active</th>
+              <th onclick="sortTable('tbl-streaks',3)">Slow %</th>
+              <th onclick="sortTable('tbl-streaks',4)">Max Streak</th>
+              <th onclick="sortTable('tbl-streaks',5)">Streak Visual</th>
+              <th onclick="sortTable('tbl-streaks',6)">Flag</th>
+            </tr>
+          </thead>
+          <tbody id="streaks-body"></tbody>
+        </table>
+      </div>
+
+      <div class="sub-title" style="margin-top:20px">Watch — Building Toward Escalation</div>
+      <p style="color:var(--text2); font-size:12px; line-height:1.7">
+        <strong style="color:var(--text)">44 child SKUs</strong> are at 1–3 month streak (Watch / Watch-Elevated / Caution). 
+        Notable: <strong style="color:var(--text)">NV-CB1</strong> (Nova 1.0 Chestnut) at 3 months with 0 units. 
+        <strong style="color:var(--text)">IN-DT1</strong> (Inertia Desert Tan) at 2 months, zero stock. 
+        <strong style="color:var(--text)">OM-GY1</strong> (Omega Vegan Gray) at 6 months — only 6 units remaining, self-liquidating.
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SECTION 4: SLOW-MOVER & OVERSTOCK + DISC CANDIDATES -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section open" id="sec-4">
+    <div class="section-header" onclick="toggleSection('sec-4')">
+      <span class="section-num">04</span>
+      <span class="section-title">Slow-Mover & Overstock Report</span>
+      <div class="section-badges">
+        <span class="badge badge-red">3 DISC. CANDIDATES</span>
+        <span class="badge badge-orange">90 SLOW-MOVER SKUs</span>
+      </div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="sub-title">Discontinuation Candidates — Full Escalation (6-Month Streak)</div>
+      <div id="disc-candidates-container"></div>
+
+      <hr class="divider">
+      <div class="sub-title">All Parents with Slow-Mover Exposure — Expand for Child Detail</div>
+      <div class="filter-bar">
+        <input type="text" class="filter-input" id="slow-search" placeholder="Search SKU or product..." oninput="filterSlowTable()">
+        <button class="filter-btn active" data-filter="all" onclick="setSlowFilter('all',this)">ALL</button>
+        <button class="filter-btn" data-filter="escalate" onclick="setSlowFilter('escalate',this)">ESCALATE</button>
+        <button class="filter-btn" data-filter="caution" onclick="setSlowFilter('caution',this)">CAUTION</button>
+        <button class="filter-btn" data-filter="watch" onclick="setSlowFilter('watch',this)">WATCH</button>
+      </div>
+      <div class="table-wrap">
+        <table id="tbl-slow">
+          <thead>
+            <tr>
+              <th onclick="sortTable('tbl-slow',0)">Parent SKU</th>
+              <th onclick="sortTable('tbl-slow',1)">Product</th>
+              <th onclick="sortTable('tbl-slow',2)">Slow / Active</th>
+              <th onclick="sortTable('tbl-slow',3)">Slow %</th>
+              <th onclick="sortTable('tbl-slow',4)">Units Stuck</th>
+              <th onclick="sortTable('tbl-slow',5)">Value at Risk</th>
+              <th onclick="sortTable('tbl-slow',6)">Streak</th>
+              <th onclick="sortTable('tbl-slow',7)">Flag</th>
+            </tr>
+          </thead>
+          <tbody id="slow-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SECTION 5: CHINA REORDER -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section open" id="sec-5">
+    <div class="section-header" onclick="toggleSection('sec-5')">
+      <span class="section-num">05</span>
+      <span class="section-title">Reorder Alert — China Batch</span>
+      <div class="section-badges">
+        <span class="badge badge-red">5 SKUs AT REORDER</span>
+        <span class="badge badge-gray">~82 PAIRS · ~$1,397</span>
+      </div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="alert alert-red">
+        <strong>No China PO in pipeline.</strong> Place this week. ASL-SO-060-BL1 (1.9 wks WOS) is in CRITICAL territory.
+      </div>
+      <div class="table-wrap">
+        <table id="tbl-china">
+          <thead>
+            <tr>
+              <th onclick="sortTable('tbl-china',0)">SKU</th>
+              <th onclick="sortTable('tbl-china',1)">Product</th>
+              <th onclick="sortTable('tbl-china',2)">On Hand</th>
+              <th onclick="sortTable('tbl-china',3)">WOS</th>
+              <th onclick="sortTable('tbl-china',4)">Reorder Pt</th>
+              <th onclick="sortTable('tbl-china',5)">Order Qty</th>
+              <th onclick="sortTable('tbl-china',6)">Unit Cost</th>
+              <th onclick="sortTable('tbl-china',7)">Est. Value</th>
+              <th onclick="sortTable('tbl-china',8)">Status</th>
+            </tr>
+          </thead>
+          <tbody id="china-body"></tbody>
+        </table>
+      </div>
+      <div class="sub-title" style="margin-top:16px">Early Warning — Within 4 Weeks of Reorder Point</div>
+      <div class="table-wrap">
+        <table><thead><tr><th>SKU</th><th>Product</th><th>On Hand</th><th>WOS</th><th>Reorder Pt</th></tr></thead>
+        <tbody>
+          <tr><td>ASL-SO-070-BL1</td><td class="product-name">Astra Soft Toe Black 7</td><td>30</td><td>17.7</td><td>25.4</td></tr>
+          <tr><td>ASL-SO-075-BL1</td><td class="product-name">Astra Soft Toe Black 7.5</td><td>29</td><td>15.1</td><td>28.8</td></tr>
+          <tr><td>LN-110-BB1</td><td class="product-name">Luna Comp Toe Brown/Black 11</td><td>7</td><td>18.2</td><td>5.8</td></tr>
+        </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SECTION 6: MEXICO REORDER -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section open" id="sec-6">
+    <div class="section-header" onclick="toggleSection('sec-6')">
+      <span class="section-num">06</span>
+      <span class="section-title">Reorder Alert — Mexico Batch</span>
+      <div class="section-badges">
+        <span class="badge badge-green">PO-0068 IN PIPELINE</span>
+        <span class="badge badge-red">57 UNCOVERED</span>
+        <span class="badge badge-orange">848 PAIRS NEEDED</span>
+      </div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="two-col" style="margin-bottom:16px">
+        <div class="alert alert-green" style="background:rgba(62,207,142,0.07); border-color:var(--green)">
+          <strong>✅ PO-0068 In Pipeline</strong><br>
+          964 pairs · $54,200 · Arriving ~Apr 14, 2026<br>
+          Covers 33 SKUs. 4 SKUs will still be LOW at arrival.<br>
+          <span style="font-size:11px; color:var(--text3)">Flags for April add-on: OM-075-BL2 (5.1w), GR-080-BL3 (6.5w), RO-070-WH1 (6.8w), GR-075-BL3 (6.8w)</span>
+        </div>
+        <div class="alert alert-red">
+          <strong>🚨 57 SKUs Uncovered</strong><br>
+          848 pairs needed · ~$26,964 est. value<br>
+          34 SKUs available in supplier finished goods (April add-on)<br>
+          23 SKUs NOT in supplier inventory — need separate PO now
+        </div>
+      </div>
+
+      <div class="sub-title">Uncovered SKUs — Sorted by WOS (CRITICAL first)</div>
+      <div class="filter-bar">
+        <input type="text" class="filter-input" id="mex-search" placeholder="Search SKU or product..." oninput="filterMexTable()">
+        <button class="filter-btn active" data-filter="all" onclick="setMexFilter('all',this)">ALL</button>
+        <button class="filter-btn" data-filter="critical" onclick="setMexFilter('critical',this)">CRITICAL</button>
+        <button class="filter-btn" data-filter="low" onclick="setMexFilter('low',this)">LOW</button>
+      </div>
+      <div class="table-wrap">
+        <table id="tbl-mex">
+          <thead>
+            <tr>
+              <th onclick="sortTable('tbl-mex',0)">SKU</th>
+              <th onclick="sortTable('tbl-mex',1)">Product</th>
+              <th onclick="sortTable('tbl-mex',2)">On Hand</th>
+              <th onclick="sortTable('tbl-mex',3)">WOS</th>
+              <th onclick="sortTable('tbl-mex',4)">Order Qty</th>
+              <th onclick="sortTable('tbl-mex',5)">Unit Cost</th>
+              <th onclick="sortTable('tbl-mex',6)">Est. Value</th>
+              <th onclick="sortTable('tbl-mex',7)">Status</th>
+            </tr>
+          </thead>
+          <tbody id="mex-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SECTION 7: FULL WOS SUMMARY -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section" id="sec-7">
+    <div class="section-header" onclick="toggleSection('sec-7')">
+      <span class="section-num">07</span>
+      <span class="section-title">Full WOS Summary — All Footwear</span>
+      <div class="section-badges">
+        <span class="badge badge-gray">ALL PARENTS · EXPAND FOR SIZES</span>
+      </div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="filter-bar">
+        <input type="text" class="filter-input" id="wos-search" placeholder="Search SKU or product..." oninput="filterWosTable()">
+        <button class="filter-btn active" data-filter="all" onclick="setWosFilter('all',this)">ALL</button>
+        <button class="filter-btn" data-filter="critical" onclick="setWosFilter('critical',this)">CRITICAL</button>
+        <button class="filter-btn" data-filter="low" onclick="setWosFilter('low',this)">LOW</button>
+        <button class="filter-btn" data-filter="healthy" onclick="setWosFilter('healthy',this)">HEALTHY</button>
+        <button class="filter-btn" data-filter="watch" onclick="setWosFilter('watch',this)">WATCH</button>
+        <button class="filter-btn" data-filter="overstocked" onclick="setWosFilter('overstocked',this)">OVERSTOCK</button>
+      </div>
+      <div class="table-wrap">
+        <table id="tbl-wos">
+          <thead>
+            <tr>
+              <th onclick="sortTable('tbl-wos',0)">Parent SKU</th>
+              <th onclick="sortTable('tbl-wos',1)">Product</th>
+              <th onclick="sortTable('tbl-wos',2)">Supplier</th>
+              <th onclick="sortTable('tbl-wos',3)">Total OH</th>
+              <th onclick="sortTable('tbl-wos',4)">Weekly Vel</th>
+              <th onclick="sortTable('tbl-wos',5)">WOS</th>
+              <th onclick="sortTable('tbl-wos',6)">LA / MIL</th>
+              <th onclick="sortTable('tbl-wos',7)">Streak</th>
+              <th onclick="sortTable('tbl-wos',8)">Status</th>
+            </tr>
+          </thead>
+          <tbody id="wos-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SECTION 8: SEASONAL VELOCITY WATCH -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section" id="sec-8">
+    <div class="section-header" onclick="toggleSection('sec-8')">
+      <span class="section-num">08</span>
+      <span class="section-title">Seasonal Velocity Watch</span>
+      <div class="section-badges">
+        <span class="badge badge-orange">MARCH SURGE: +67% vs FEB</span>
+      </div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="alert alert-orange">
+        <strong>March 2025 sold 1,489 units vs February 2025's 891 — a 67% surge.</strong> Current stockout exposure on Gravity, Omega Bourbon, and Valence is hitting exactly as seasonal demand accelerates. PO-0068 arrives April 14 — expect 4–6 weeks of constrained supply on the most critical SKUs during peak season.
+      </div>
+      <p style="color:var(--text2); font-size:12px; line-height:1.8; max-width:700px">
+        Sales YTD through Feb 2026: <strong style="color:var(--text)">1,945 units.</strong> 
+        Full target WOS (Mexico 16 wks) applied to all reorder quantities — no seasonal reduction applied given spring acceleration. 
+        NV-BL5 (Nova 2.0) seasonal exclusion begins May — currently tracked through April.
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SECTION 9: DATA ANOMALIES -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section" id="sec-9">
+    <div class="section-header" onclick="toggleSection('sec-9')">
+      <span class="section-num">09</span>
+      <span class="section-title">Data Anomaly Flags</span>
+      <div class="section-badges">
+        <span class="badge badge-yellow">3 FLAGS</span>
+      </div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>SKU / File</th><th>Issue</th><th>Detail</th><th>Action Required</th></tr></thead>
+          <tbody>
+            <tr class="anomaly-row">
+              <td>GR-AM3</td>
+              <td class="product-name">Zero velocity — possible new product</td>
+              <td>184 units on hand, $0 sales across all windows. 1-month streak.</td>
+              <td class="product-name">Confirm if colorway is live on site</td>
+            </tr>
+            <tr class="anomaly-row">
+              <td>OM-VB2</td>
+              <td class="product-name">Suppressed until May 2026</td>
+              <td>Not available for reorder until May. Excluded from all planning.</td>
+              <td class="product-name">IMP will flag when May arrives — confirm re-enable</td>
+            </tr>
+            <tr class="anomaly-row">
+              <td>Inv_021225</td>
+              <td class="product-name">Supplier file date unclear</td>
+              <td>Filename suggests Feb 12, 2025. If accurate, data is 12+ months old.</td>
+              <td class="product-name">Confirm actual file date before April add-on</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- SECTION 10: PRIORITY ACTION LIST -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section open" id="sec-10">
+    <div class="section-header" onclick="toggleSection('sec-10')">
+      <span class="section-num">10</span>
+      <span class="section-title">Priority Action List</span>
+      <div class="section-badges">
+        <span class="badge badge-red">4 URGENT</span>
+        <span class="badge badge-orange">3 THIS WEEK</span>
+      </div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Priority</th><th>Action</th><th>Deadline</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><span class="status s-critical">URGENT</span></td><td class="product-name">Place China PO — 82 pairs ~$1,397. ASL-SO-060-BL1 at 1.9 wks WOS is near stockout.</td><td>This week</td></tr>
+            <tr><td>2</td><td><span class="status s-critical">URGENT</span></td><td class="product-name">Supplemental Mexico PO for CRITICAL uncovered SKUs NOT in supplier inventory (HZ-075-TN1, Gravity Cognac sizes, OM Vegan Brown, Nova sizes).</td><td>This week</td></tr>
+            <tr><td>3</td><td><span class="status s-critical">URGENT</span></td><td class="product-name">Confirm GR-AM3 (Gravity Amber) live status — 184 units, zero velocity.</td><td>This week</td></tr>
+            <tr><td>4</td><td><span class="status s-critical">URGENT</span></td><td class="product-name">Confirm supplier inventory file date (2025 vs 2026) before April add-on planning.</td><td>This week</td></tr>
+            <tr><td>5</td><td><span class="status s-low">THIS WEEK</span></td><td class="product-name">Decide Rogue Soft channel (Black + White) — 96 units, ~$5,512. Recommended: discontinue and markdown.</td><td>This week</td></tr>
+            <tr><td>6</td><td><span class="status s-low">THIS WEEK</span></td><td class="product-name">Decide Fusion (v2) Black liquidation strategy — 272 units, $18,224 at cost.</td><td>This week</td></tr>
+            <tr><td>7</td><td><span class="status s-watch">APRIL</span></td><td class="product-name">April add-on analysis: cross-reference 34 available supplier SKUs against post-PO WOS. IMP will run analysis when you upload current on-hand.</td><td>Early April</td></tr>
+            <tr><td>8</td><td><span class="status s-watch">MONITOR</span></td><td class="product-name">Watch 4 post-PO LOW WOS SKUs at arrival: OM-075-BL2 (5.1w), GR-080-BL3 (6.5w), RO-070-WH1 (6.8w), GR-075-BL3 (6.8w).</td><td>Apr 14</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:40px"></div>
+</div>
+
+<script>
+const DASH = {"kpis": {"la_oh": 7922, "mil_oh": 3241, "total_oh": 11163, "total_val": 397624.0, "units_sold": 386, "critical_count": 31, "low_count": 53, "healthy_count": 58, "watch_count": 44, "overstock_count": 140, "zero_count": 108, "slow_count": 90, "disc_candidates": 3, "streak_watch_count": 44}, "parents": [{"parent_sku": "ASL-BL1", "product_name": "Astra Comp Toe Black", "supplier": "China", "total_oh": 4714, "total_val": 120322.5, "parent_wos": 104.8, "wos_status": "OVERSTOCKED", "n_slow": 1, "n_active": 12, "slow_pct": 8.3, "max_streak": 6, "total_sold": 83, "total_vel": 45.0, "disc_candidate": false}, {"parent_sku": "ASL-SO-BL1", "product_name": "Astra Soft Toe Black", "supplier": "China", "total_oh": 241, "total_val": 5688.2, "parent_wos": 18.8, "wos_status": "WATCH", "n_slow": 3, "n_active": 12, "slow_pct": 25.0, "max_streak": 6, "total_sold": 20, "total_vel": 12.85, "disc_candidate": false}, {"parent_sku": "ASL-SO-WH1", "product_name": "Astra Soft Toe White", "supplier": "China", "total_oh": 91, "total_val": 2322.0, "parent_wos": 28.0, "wos_status": "WATCH", "n_slow": 4, "n_active": 8, "slow_pct": 50.0, "max_streak": 6, "total_sold": 3, "total_vel": 3.25, "disc_candidate": false}, {"parent_sku": "ASL-WH1", "product_name": "Astra Comp Toe White", "supplier": "China", "total_oh": 999, "total_val": 28045.3, "parent_wos": 74.2, "wos_status": "OVERSTOCKED", "n_slow": 1, "n_active": 11, "slow_pct": 9.1, "max_streak": 6, "total_sold": 13, "total_vel": 13.46, "disc_candidate": false}, {"parent_sku": "FN-BL2", "product_name": "Fusion (v2) Black", "supplier": "Mexico", "total_oh": 272, "total_val": 18224.0, "parent_wos": 35.5, "wos_status": "OVERSTOCKED", "n_slow": 16, "n_active": 19, "slow_pct": 84.2, "max_streak": 6, "total_sold": 10, "total_vel": 7.65, "disc_candidate": true}, {"parent_sku": "GR-AM3", "product_name": "Gravity Amber", "supplier": "Mexico", "total_oh": 184, "total_val": 0.0, "parent_wos": 999.0, "wos_status": "NO VELOCITY", "n_slow": 0, "n_active": 17, "slow_pct": 0.0, "max_streak": 1, "total_sold": 0, "total_vel": NaN, "disc_candidate": false}, {"parent_sku": "GR-BL3", "product_name": "Gravity Black", "supplier": "Mexico", "total_oh": 194, "total_val": 11678.8, "parent_wos": 6.5, "wos_status": "LOW", "n_slow": 3, "n_active": 20, "slow_pct": 15.0, "max_streak": 6, "total_sold": 40, "total_vel": 30.08, "disc_candidate": false}, {"parent_sku": "GR-BT1", "product_name": "Gravity Vegan Blackout", "supplier": "Mexico", "total_oh": 0, "total_val": 0.0, "parent_wos": 0.0, "wos_status": "ZERO STOCK", "n_slow": 0, "n_active": 0, "slow_pct": 0.0, "max_streak": 0, "total_sold": 0, "total_vel": 1.06, "disc_candidate": false}, {"parent_sku": "HZ-BL1", "product_name": "Horizon Black", "supplier": "Mexico", "total_oh": 136, "total_val": 8187.2, "parent_wos": 13.5, "wos_status": "HEALTHY", "n_slow": 5, "n_active": 13, "slow_pct": 38.5, "max_streak": 6, "total_sold": 8, "total_vel": 10.08, "disc_candidate": false}, {"parent_sku": "HZ-TN1", "product_name": "Horizon Tan", "supplier": "Mexico", "total_oh": 98, "total_val": 5899.6, "parent_wos": 8.4, "wos_status": "HEALTHY", "n_slow": 2, "n_active": 13, "slow_pct": 15.4, "max_streak": 6, "total_sold": 8, "total_vel": 11.62, "disc_candidate": false}, {"parent_sku": "IN-BL1", "product_name": "Inertia Matte Black", "supplier": "Mexico", "total_oh": 0, "total_val": 0.0, "parent_wos": 0.0, "wos_status": "ZERO STOCK", "n_slow": 0, "n_active": 0, "slow_pct": 0.0, "max_streak": 0, "total_sold": 0, "total_vel": 0.42, "disc_candidate": false}, {"parent_sku": "IN-DT1", "product_name": "Inertia Desert Tan", "supplier": "Mexico", "total_oh": 0, "total_val": 0.0, "parent_wos": 0.0, "wos_status": "ZERO STOCK", "n_slow": 0, "n_active": 0, "slow_pct": 0.0, "max_streak": 2, "total_sold": 0, "total_vel": 0.23, "disc_candidate": false}, {"parent_sku": "LN-BB1", "product_name": "Luna Comp Toe Brown / Black", "supplier": "China", "total_oh": 671, "total_val": 19728.8, "parent_wos": 58.9, "wos_status": "OVERSTOCKED", "n_slow": 1, "n_active": 12, "slow_pct": 8.3, "max_streak": 5, "total_sold": 18, "total_vel": 11.38, "disc_candidate": false}, {"parent_sku": "LN-BL1", "product_name": "Luna Comp Toe Black", "supplier": "China", "total_oh": 1223, "total_val": 38911.6, "parent_wos": 89.8, "wos_status": "OVERSTOCKED", "n_slow": 5, "n_active": 13, "slow_pct": 38.5, "max_streak": 5, "total_sold": 17, "total_vel": 13.62, "disc_candidate": false}, {"parent_sku": "NV-BL3", "product_name": "Nova 1.0 (Black 8.5W)", "supplier": "Mexico", "total_oh": 0, "total_val": 0.0, "parent_wos": 0.0, "wos_status": "ZERO STOCK", "n_slow": 0, "n_active": 0, "slow_pct": 0.0, "max_streak": 0, "total_sold": 0, "total_vel": NaN, "disc_candidate": false}, {"parent_sku": "NV-BL4", "product_name": "Nova EH 2.0 Black", "supplier": "Mexico", "total_oh": 0, "total_val": 0.0, "parent_wos": 0.0, "wos_status": "ZERO STOCK", "n_slow": 0, "n_active": 0, "slow_pct": 0.0, "max_streak": 1, "total_sold": 0, "total_vel": 0.75, "disc_candidate": false}, {"parent_sku": "NV-BL5", "product_name": "Nova 2.0 (v2) Black", "supplier": "Mexico", "total_oh": 69, "total_val": 4958.0, "parent_wos": 10.2, "wos_status": "HEALTHY", "n_slow": 2, "n_active": 16, "slow_pct": 12.5, "max_streak": 6, "total_sold": 8, "total_vel": 6.77, "disc_candidate": false}, {"parent_sku": "NV-CB1", "product_name": "Nova 1.0 (Chestnut Brown 5 Slim)", "supplier": "Mexico", "total_oh": 0, "total_val": 0.0, "parent_wos": 0.0, "wos_status": "ZERO STOCK", "n_slow": 0, "n_active": 0, "slow_pct": 0.0, "max_streak": 3, "total_sold": 0, "total_vel": 0.08, "disc_candidate": false}, {"parent_sku": "NV-CB2", "product_name": "Nova 1.0 (Chestnut 9 Reg)", "supplier": "Mexico", "total_oh": 0, "total_val": 0.0, "parent_wos": 0.0, "wos_status": "ZERO STOCK", "n_slow": 0, "n_active": 0, "slow_pct": 0.0, "max_streak": 0, "total_sold": 0, "total_vel": NaN, "disc_candidate": false}, {"parent_sku": "OM-BL2", "product_name": "Omega (v2) Black", "supplier": "Mexico", "total_oh": 595, "total_val": 34510.0, "parent_wos": 13.0, "wos_status": "HEALTHY", "n_slow": 0, "n_active": 19, "slow_pct": 0.0, "max_streak": 6, "total_sold": 50, "total_vel": 45.77, "disc_candidate": false}, {"parent_sku": "OM-BO2", "product_name": "Omega (v2) Bourbon", "supplier": "Mexico", "total_oh": 131, "total_val": 7598.0, "parent_wos": 6.3, "wos_status": "LOW", "n_slow": 2, "n_active": 17, "slow_pct": 11.8, "max_streak": 6, "total_sold": 14, "total_vel": 20.85, "disc_candidate": false}, {"parent_sku": "OM-GY1", "product_name": "Omega Vegan Gray", "supplier": "Mexico", "total_oh": 6, "total_val": 277.2, "parent_wos": 3.1, "wos_status": "CRITICAL", "n_slow": 0, "n_active": 3, "slow_pct": 0.0, "max_streak": 6, "total_sold": 0, "total_vel": 1.96, "disc_candidate": false}, {"parent_sku": "RO-BL1", "product_name": "Rogue Black", "supplier": "Mexico", "total_oh": 205, "total_val": 11480.0, "parent_wos": 27.2, "wos_status": "OVERSTOCKED", "n_slow": 5, "n_active": 12, "slow_pct": 41.7, "max_streak": 6, "total_sold": 11, "total_vel": 7.54, "disc_candidate": false}, {"parent_sku": "RO-SO-BL1", "product_name": "Rogue (Soft) Black", "supplier": "Mexico", "total_oh": 29, "total_val": 1508.0, "parent_wos": 21.2, "wos_status": "OVERSTOCKED", "n_slow": 6, "n_active": 10, "slow_pct": 60.0, "max_streak": 6, "total_sold": 3, "total_vel": 1.37, "disc_candidate": true}, {"parent_sku": "RO-SO-WH1", "product_name": "Rogue (Soft) White", "supplier": "Mexico", "total_oh": 67, "total_val": 3484.0, "parent_wos": 74.1, "wos_status": "OVERSTOCKED", "n_slow": 8, "n_active": 12, "slow_pct": 66.7, "max_streak": 6, "total_sold": 2, "total_vel": 0.9, "disc_candidate": true}, {"parent_sku": "RO-WH1", "product_name": "Rogue White", "supplier": "Mexico", "total_oh": 160, "total_val": 8960.0, "parent_wos": 11.5, "wos_status": "HEALTHY", "n_slow": 3, "n_active": 12, "slow_pct": 25.0, "max_streak": 6, "total_sold": 20, "total_vel": 13.92, "disc_candidate": false}, {"parent_sku": "SP-AU2", "product_name": "Spice (v2) Dark Lava", "supplier": "Mexico", "total_oh": 189, "total_val": 11718.0, "parent_wos": 14.3, "wos_status": "HEALTHY", "n_slow": 5, "n_active": 18, "slow_pct": 27.8, "max_streak": 6, "total_sold": 10, "total_vel": 13.19, "disc_candidate": false}, {"parent_sku": "SP-BL2", "product_name": "Spice (v2) Black", "supplier": "Mexico", "total_oh": 478, "total_val": 29636.0, "parent_wos": 17.6, "wos_status": "WATCH", "n_slow": 2, "n_active": 19, "slow_pct": 10.5, "max_streak": 6, "total_sold": 13, "total_vel": 27.15, "disc_candidate": false}, {"parent_sku": "SP-MD2", "product_name": "Spice (v2) Mystic Dune", "supplier": "Mexico", "total_oh": 146, "total_val": 9052.0, "parent_wos": 11.9, "wos_status": "HEALTHY", "n_slow": 7, "n_active": 19, "slow_pct": 36.8, "max_streak": 6, "total_sold": 6, "total_vel": 12.31, "disc_candidate": false}, {"parent_sku": "VA-BL2", "product_name": "Valence (v2) Vegan Black", "supplier": "Mexico", "total_oh": 146, "total_val": 7938.0, "parent_wos": 7.9, "wos_status": "LOW", "n_slow": 4, "n_active": 19, "slow_pct": 21.1, "max_streak": 6, "total_sold": 15, "total_vel": 18.38, "disc_candidate": false}, {"parent_sku": "VA-CB2", "product_name": "Valence (v2) Chestnut Brown", "supplier": "Mexico", "total_oh": 119, "total_val": 7497.0, "parent_wos": 7.1, "wos_status": "LOW", "n_slow": 5, "n_active": 19, "slow_pct": 26.3, "max_streak": 6, "total_sold": 14, "total_vel": 16.85, "disc_candidate": false}], "children": {"ASL-BL1": [{"sku": "ASL-050-BL1", "size": "050", "on_hand": 113, "la": 113, "mil": 0, "wos": 66.8, "wos_status": "OVERSTOCKED", "sales_90d": 22, "streak": 6, "is_slow": false, "avg_cost": 11.87, "po_qty": 0}, {"sku": "ASL-110-BL1", "size": "110", "on_hand": 131, "la": 131, "mil": 0, "wos": 77.4, "wos_status": "OVERSTOCKED", "sales_90d": 22, "streak": 6, "is_slow": false, "avg_cost": 13.15, "po_qty": 0}, {"sku": "ASL-095-BL1", "size": "095", "on_hand": 269, "la": 269, "mil": 0, "wos": 79.5, "wos_status": "OVERSTOCKED", "sales_90d": 44, "streak": 5, "is_slow": false, "avg_cost": 12.61, "po_qty": 0}, {"sku": "ASL-100-BL1", "size": "100", "on_hand": 303, "la": 303, "mil": 0, "wos": 83.8, "wos_status": "OVERSTOCKED", "sales_90d": 47, "streak": 6, "is_slow": false, "avg_cost": 12.41, "po_qty": 0}, {"sku": "ASL-060-BL1", "size": "060", "on_hand": 269, "la": 268, "mil": 1, "wos": 89.7, "wos_status": "OVERSTOCKED", "sales_90d": 39, "streak": 6, "is_slow": false, "avg_cost": 25.81, "po_qty": 0}, {"sku": "ASL-085-BL1", "size": "085", "on_hand": 596, "la": 596, "mil": 0, "wos": 90.1, "wos_status": "OVERSTOCKED", "sales_90d": 86, "streak": 6, "is_slow": false, "avg_cost": 12.75, "po_qty": 0}, {"sku": "ASL-090-BL1", "size": "090", "on_hand": 542, "la": 542, "mil": 0, "wos": 100.7, "wos_status": "OVERSTOCKED", "sales_90d": 70, "streak": 6, "is_slow": false, "avg_cost": 12.71, "po_qty": 0}, {"sku": "ASL-075-BL1", "size": "075", "on_hand": 641, "la": 641, "mil": 0, "wos": 101.6, "wos_status": "OVERSTOCKED", "sales_90d": 82, "streak": 4, "is_slow": false, "avg_cost": 12.82, "po_qty": 0}, {"sku": "ASL-080-BL1", "size": "080", "on_hand": 683, "la": 683, "mil": 0, "wos": 111.0, "wos_status": "OVERSTOCKED", "sales_90d": 80, "streak": 5, "is_slow": false, "avg_cost": 12.82, "po_qty": 0}, {"sku": "ASL-065-BL1", "size": "065", "on_hand": 392, "la": 391, "mil": 1, "wos": 130.7, "wos_status": "OVERSTOCKED", "sales_90d": 39, "streak": 5, "is_slow": false, "avg_cost": 25.96, "po_qty": 0}, {"sku": "ASL-070-BL1", "size": "070", "on_hand": 689, "la": 689, "mil": 0, "wos": 182.8, "wos_status": "OVERSTOCKED", "sales_90d": 49, "streak": 6, "is_slow": false, "avg_cost": 12.94, "po_qty": 0}, {"sku": "ASL-120-BL1", "size": "120", "on_hand": 86, "la": 86, "mil": 0, "wos": 223.6, "wos_status": "OVERSTOCKED", "sales_90d": 5, "streak": 6, "is_slow": true, "avg_cost": 13.15, "po_qty": 0}], "ASL-SO-BL1": [{"sku": "ASL-SO-060-BL1", "size": "060", "on_hand": 2, "la": 2, "mil": 0, "wos": 1.9, "wos_status": "CRITICAL", "sales_90d": 14, "streak": 4, "is_slow": false, "avg_cost": 11.9, "po_qty": 0}, {"sku": "ASL-SO-050-BL1", "size": "050", "on_hand": 5, "la": 4, "mil": 1, "wos": 8.1, "wos_status": "HEALTHY", "sales_90d": 8, "streak": 6, "is_slow": false, "avg_cost": 23.8, "po_qty": 0}, {"sku": "ASL-SO-095-BL1", "size": "095", "on_hand": 9, "la": 9, "mil": 0, "wos": 8.4, "wos_status": "HEALTHY", "sales_90d": 14, "streak": 6, "is_slow": false, "avg_cost": 11.9, "po_qty": 0}, {"sku": "ASL-SO-090-BL1", "size": "090", "on_hand": 16, "la": 16, "mil": 0, "wos": 11.6, "wos_status": "HEALTHY", "sales_90d": 18, "streak": 4, "is_slow": false, "avg_cost": 22.31, "po_qty": 0}, {"sku": "ASL-SO-075-BL1", "size": "075", "on_hand": 29, "la": 29, "mil": 0, "wos": 15.1, "wos_status": "HEALTHY", "sales_90d": 25, "streak": 4, "is_slow": false, "avg_cost": 22.98, "po_qty": 0}, {"sku": "ASL-SO-070-BL1", "size": "070", "on_hand": 30, "la": 30, "mil": 0, "wos": 17.7, "wos_status": "WATCH", "sales_90d": 22, "streak": 6, "is_slow": false, "avg_cost": 23.8, "po_qty": 0}, {"sku": "ASL-SO-085-BL1", "size": "085", "on_hand": 32, "la": 31, "mil": 1, "wos": 23.1, "wos_status": "WATCH", "sales_90d": 18, "streak": 5, "is_slow": false, "avg_cost": 23.8, "po_qty": 0}, {"sku": "ASL-SO-080-BL1", "size": "080", "on_hand": 40, "la": 39, "mil": 1, "wos": 26.0, "wos_status": "WATCH", "sales_90d": 20, "streak": 6, "is_slow": false, "avg_cost": 23.8, "po_qty": 0}, {"sku": "ASL-SO-110-BL1", "size": "110", "on_hand": 11, "la": 11, "mil": 0, "wos": 28.6, "wos_status": "WATCH", "sales_90d": 5, "streak": 6, "is_slow": true, "avg_cost": 23.8, "po_qty": 0}, {"sku": "ASL-SO-065-BL1", "size": "065", "on_hand": 31, "la": 30, "mil": 1, "wos": 28.8, "wos_status": "WATCH", "sales_90d": 14, "streak": 6, "is_slow": false, "avg_cost": 23.8, "po_qty": 0}, {"sku": "ASL-SO-120-BL1", "size": "120", "on_hand": 9, "la": 9, "mil": 0, "wos": 39.0, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 23.8, "po_qty": 0}, {"sku": "ASL-SO-100-BL1", "size": "100", "on_hand": 27, "la": 27, "mil": 0, "wos": 58.5, "wos_status": "OVERSTOCKED", "sales_90d": 6, "streak": 6, "is_slow": true, "avg_cost": 11.9, "po_qty": 0}], "ASL-SO-WH1": [{"sku": "ASL-SO-050-WH1", "size": "050", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": 3, "streak": 4, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "ASL-SO-095-WH1", "size": "095", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": 2, "streak": 4, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "ASL-SO-100-WH1", "size": "100", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 2, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "ASL-SO-060-WH1", "size": "060", "on_hand": 1, "la": 1, "mil": 0, "wos": 4.3, "wos_status": "LOW", "sales_90d": 3, "streak": 6, "is_slow": false, "avg_cost": 12.9, "po_qty": 0}, {"sku": "ASL-SO-110-WH1", "size": "110", "on_hand": 1, "la": 1, "mil": 0, "wos": 17.3, "wos_status": "WATCH", "sales_90d": null, "streak": 4, "is_slow": false, "avg_cost": 25.8, "po_qty": 0}, {"sku": "ASL-SO-080-WH1", "size": "080", "on_hand": 17, "la": 17, "mil": 0, "wos": 20.1, "wos_status": "WATCH", "sales_90d": 11, "streak": 6, "is_slow": false, "avg_cost": 25.8, "po_qty": 0}, {"sku": "ASL-SO-065-WH1", "size": "065", "on_hand": 8, "la": 6, "mil": 2, "wos": 20.8, "wos_status": "WATCH", "sales_90d": 5, "streak": 6, "is_slow": false, "avg_cost": 25.8, "po_qty": 0}, {"sku": "ASL-SO-070-WH1", "size": "070", "on_hand": 18, "la": 18, "mil": 0, "wos": 33.4, "wos_status": "OVERSTOCKED", "sales_90d": 7, "streak": 6, "is_slow": true, "avg_cost": 12.18, "po_qty": 0}, {"sku": "ASL-SO-085-WH1", "size": "085", "on_hand": 10, "la": 9, "mil": 1, "wos": 43.3, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 25.8, "po_qty": 0}, {"sku": "ASL-SO-090-WH1", "size": "090", "on_hand": 7, "la": 7, "mil": 0, "wos": 45.5, "wos_status": "OVERSTOCKED", "sales_90d": 2, "streak": 6, "is_slow": true, "avg_cost": 12.9, "po_qty": 0}, {"sku": "ASL-SO-075-WH1", "size": "075", "on_hand": 29, "la": 29, "mil": 0, "wos": 188.5, "wos_status": "OVERSTOCKED", "sales_90d": 2, "streak": 6, "is_slow": true, "avg_cost": 12.9, "po_qty": 0}], "ASL-WH1": [{"sku": "ASL-050-WH1", "size": "050", "on_hand": 10, "la": 10, "mil": 0, "wos": 18.6, "wos_status": "WATCH", "sales_90d": 7, "streak": 6, "is_slow": false, "avg_cost": 14.15, "po_qty": 0}, {"sku": "ASL-095-WH1", "size": "095", "on_hand": 29, "la": 29, "mil": 0, "wos": 19.8, "wos_status": "WATCH", "sales_90d": 19, "streak": 5, "is_slow": false, "avg_cost": 14.15, "po_qty": 0}, {"sku": "ASL-110-WH1", "size": "110", "on_hand": 9, "la": 8, "mil": 1, "wos": 39.0, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 28.3, "po_qty": 0}, {"sku": "ASL-100-WH1", "size": "100", "on_hand": 45, "la": 44, "mil": 1, "wos": 45.0, "wos_status": "OVERSTOCKED", "sales_90d": 13, "streak": 6, "is_slow": false, "avg_cost": 28.3, "po_qty": 0}, {"sku": "ASL-060-WH1", "size": "060", "on_hand": 55, "la": 55, "mil": 0, "wos": 59.6, "wos_status": "OVERSTOCKED", "sales_90d": 12, "streak": 6, "is_slow": false, "avg_cost": 14.15, "po_qty": 0}, {"sku": "ASL-085-WH1", "size": "085", "on_hand": 144, "la": 144, "mil": 0, "wos": 78.0, "wos_status": "OVERSTOCKED", "sales_90d": 24, "streak": 6, "is_slow": false, "avg_cost": 14.05, "po_qty": 0}, {"sku": "ASL-075-WH1", "size": "075", "on_hand": 160, "la": 160, "mil": 0, "wos": 80.0, "wos_status": "OVERSTOCKED", "sales_90d": 26, "streak": 6, "is_slow": false, "avg_cost": 14.15, "po_qty": 0}, {"sku": "ASL-090-WH1", "size": "090", "on_hand": 131, "la": 131, "mil": 0, "wos": 81.1, "wos_status": "OVERSTOCKED", "sales_90d": 21, "streak": 5, "is_slow": false, "avg_cost": 14.15, "po_qty": 0}, {"sku": "ASL-080-WH1", "size": "080", "on_hand": 175, "la": 175, "mil": 0, "wos": 98.9, "wos_status": "OVERSTOCKED", "sales_90d": 23, "streak": 5, "is_slow": false, "avg_cost": 13.91, "po_qty": 0}, {"sku": "ASL-070-WH1", "size": "070", "on_hand": 151, "la": 151, "mil": 0, "wos": 115.5, "wos_status": "OVERSTOCKED", "sales_90d": 17, "streak": 6, "is_slow": false, "avg_cost": 14.15, "po_qty": 0}, {"sku": "ASL-065-WH1", "size": "065", "on_hand": 90, "la": 90, "mil": 0, "wos": 117.0, "wos_status": "OVERSTOCKED", "sales_90d": 10, "streak": 6, "is_slow": false, "avg_cost": 13.52, "po_qty": 0}], "FN-BL2": [{"sku": "FN-120-BL2", "size": "120", "on_hand": 6, "la": 0, "mil": 6, "wos": 15.6, "wos_status": "HEALTHY", "sales_90d": 5, "streak": 6, "is_slow": false, "avg_cost": 67.0, "po_qty": 0}, {"sku": "FN-080-BL2", "size": "080", "on_hand": 17, "la": 0, "mil": 17, "wos": 17.0, "wos_status": "WATCH", "sales_90d": 13, "streak": 6, "is_slow": false, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-095W-BL2", "size": "095W", "on_hand": 8, "la": 0, "mil": 8, "wos": 17.3, "wos_status": "WATCH", "sales_90d": 6, "streak": 6, "is_slow": false, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-065-BL2", "size": "065", "on_hand": 11, "la": 0, "mil": 11, "wos": 23.8, "wos_status": "OVERSTOCKED", "sales_90d": 6, "streak": 6, "is_slow": true, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-100-BL2", "size": "100", "on_hand": 16, "la": 0, "mil": 16, "wos": 26.0, "wos_status": "OVERSTOCKED", "sales_90d": 8, "streak": 6, "is_slow": true, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-085W-BL2", "size": "085W", "on_hand": 12, "la": 0, "mil": 12, "wos": 26.0, "wos_status": "OVERSTOCKED", "sales_90d": 6, "streak": 6, "is_slow": true, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-095-BL2", "size": "095", "on_hand": 11, "la": 0, "mil": 11, "wos": 28.6, "wos_status": "OVERSTOCKED", "sales_90d": 5, "streak": 6, "is_slow": true, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-070W-BL2", "size": "070W", "on_hand": 9, "la": 0, "mil": 9, "wos": 29.2, "wos_status": "OVERSTOCKED", "sales_90d": 4, "streak": 6, "is_slow": true, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-075W-BL2", "size": "075W", "on_hand": 10, "la": 0, "mil": 10, "wos": 32.5, "wos_status": "OVERSTOCKED", "sales_90d": 4, "streak": 6, "is_slow": true, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-080W-BL2", "size": "080W", "on_hand": 13, "la": 0, "mil": 13, "wos": 33.8, "wos_status": "OVERSTOCKED", "sales_90d": 5, "streak": 6, "is_slow": true, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-090-BL2", "size": "090", "on_hand": 23, "la": 0, "mil": 23, "wos": 42.7, "wos_status": "OVERSTOCKED", "sales_90d": 7, "streak": 6, "is_slow": true, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-085-BL2", "size": "085", "on_hand": 20, "la": 0, "mil": 20, "wos": 43.3, "wos_status": "OVERSTOCKED", "sales_90d": 6, "streak": 6, "is_slow": true, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-050-BL2", "size": "050", "on_hand": 9, "la": 0, "mil": 9, "wos": 46.8, "wos_status": "OVERSTOCKED", "sales_90d": null, "streak": 6, "is_slow": true, "avg_cost": 67.0, "po_qty": 0}, {"sku": "FN-090W-BL2", "size": "090W", "on_hand": 11, "la": 0, "mil": 11, "wos": 47.7, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-100W-BL2", "size": "100W", "on_hand": 11, "la": 0, "mil": 11, "wos": 47.7, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-070-BL2", "size": "070", "on_hand": 19, "la": 0, "mil": 19, "wos": 49.4, "wos_status": "OVERSTOCKED", "sales_90d": 5, "streak": 6, "is_slow": true, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-110-BL2", "size": "110", "on_hand": 12, "la": 0, "mil": 12, "wos": 52.0, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-075-BL2", "size": "075", "on_hand": 31, "la": 0, "mil": 31, "wos": 80.6, "wos_status": "OVERSTOCKED", "sales_90d": 5, "streak": 6, "is_slow": true, "avg_cost": 33.5, "po_qty": 0}, {"sku": "FN-060-BL2", "size": "060", "on_hand": 23, "la": 0, "mil": 23, "wos": 99.7, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 33.5, "po_qty": 0}], "GR-AM3": [{"sku": "GR-050-AM3", "size": "050", "on_hand": 4, "la": 0, "mil": 4, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-060-AM3", "size": "060", "on_hand": 8, "la": 0, "mil": 8, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-065-AM3", "size": "065", "on_hand": 12, "la": 0, "mil": 12, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-070-AM3", "size": "070", "on_hand": 16, "la": 0, "mil": 16, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-070W-AM3", "size": "070W", "on_hand": 4, "la": 0, "mil": 4, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-075-AM3", "size": "075", "on_hand": 20, "la": 0, "mil": 20, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-080-AM3", "size": "080", "on_hand": 20, "la": 0, "mil": 20, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-080W-AM3", "size": "080W", "on_hand": 8, "la": 0, "mil": 8, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-085-AM3", "size": "085", "on_hand": 20, "la": 0, "mil": 20, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-085W-AM3", "size": "085W", "on_hand": 8, "la": 0, "mil": 8, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-090-AM3", "size": "090", "on_hand": 20, "la": 0, "mil": 20, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-090W-AM3", "size": "090W", "on_hand": 8, "la": 0, "mil": 8, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-095-AM3", "size": "095", "on_hand": 8, "la": 0, "mil": 8, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-100-AM3", "size": "100", "on_hand": 12, "la": 0, "mil": 12, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-100W-AM3", "size": "100W", "on_hand": 4, "la": 0, "mil": 4, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-110-AM3", "size": "110", "on_hand": 8, "la": 0, "mil": 8, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-120-AM3", "size": "120", "on_hand": 4, "la": 0, "mil": 4, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}], "GR-BL3": [{"sku": "GR-090W-BL3", "size": "090W", "on_hand": 1, "la": 0, "mil": 1, "wos": 0.5, "wos_status": "CRITICAL", "sales_90d": 25, "streak": 4, "is_slow": false, "avg_cost": 30.1, "po_qty": 24}, {"sku": "GR-075W-BL3", "size": "075W", "on_hand": 1, "la": 0, "mil": 1, "wos": 0.8, "wos_status": "CRITICAL", "sales_90d": 17, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 16}, {"sku": "GR-065-BL3", "size": "065", "on_hand": 3, "la": 0, "mil": 3, "wos": 2.3, "wos_status": "CRITICAL", "sales_90d": 17, "streak": 5, "is_slow": false, "avg_cost": 30.1, "po_qty": 12}, {"sku": "GR-085-BL3", "size": "085", "on_hand": 9, "la": 0, "mil": 9, "wos": 2.3, "wos_status": "CRITICAL", "sales_90d": 50, "streak": 5, "is_slow": false, "avg_cost": 30.1, "po_qty": 40}, {"sku": "GR-095-BL3", "size": "095", "on_hand": 5, "la": 0, "mil": 5, "wos": 2.7, "wos_status": "CRITICAL", "sales_90d": 24, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "GR-075-BL3", "size": "075", "on_hand": 9, "la": 0, "mil": 9, "wos": 3.1, "wos_status": "CRITICAL", "sales_90d": 38, "streak": 5, "is_slow": false, "avg_cost": 30.1, "po_qty": 20}, {"sku": "GR-100W-BL3", "size": "100W", "on_hand": 7, "la": 0, "mil": 7, "wos": 4.0, "wos_status": "CRITICAL", "sales_90d": 23, "streak": 5, "is_slow": false, "avg_cost": 30.1, "po_qty": 20}, {"sku": "GR-130-BL3", "size": "130", "on_hand": 1, "la": 0, "mil": 1, "wos": 4.3, "wos_status": "LOW", "sales_90d": 3, "streak": 3, "is_slow": false, "avg_cost": 60.2, "po_qty": 4}, {"sku": "GR-095W-BL3", "size": "095W", "on_hand": 5, "la": 0, "mil": 5, "wos": 4.3, "wos_status": "LOW", "sales_90d": 15, "streak": 4, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "GR-100-BL3", "size": "100", "on_hand": 11, "la": 0, "mil": 11, "wos": 5.5, "wos_status": "LOW", "sales_90d": 26, "streak": 4, "is_slow": false, "avg_cost": 30.1, "po_qty": 20}, {"sku": "GR-060-BL3", "size": "060", "on_hand": 4, "la": 0, "mil": 4, "wos": 5.8, "wos_status": "LOW", "sales_90d": 9, "streak": 4, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "GR-080-BL3", "size": "080", "on_hand": 19, "la": 0, "mil": 19, "wos": 6.2, "wos_status": "LOW", "sales_90d": 40, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 20}, {"sku": "GR-070-BL3", "size": "070", "on_hand": 13, "la": 0, "mil": 13, "wos": 7.7, "wos_status": "LOW", "sales_90d": 22, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "GR-085W-BL3", "size": "085W", "on_hand": 12, "la": 0, "mil": 12, "wos": 8.2, "wos_status": "HEALTHY", "sales_90d": 19, "streak": 4, "is_slow": false, "avg_cost": 30.1, "po_qty": 16}, {"sku": "GR-110-BL3", "size": "110", "on_hand": 13, "la": 0, "mil": 13, "wos": 12.1, "wos_status": "HEALTHY", "sales_90d": 14, "streak": 5, "is_slow": false, "avg_cost": 30.1, "po_qty": 12}, {"sku": "GR-090-BL3", "size": "090", "on_hand": 27, "la": 0, "mil": 27, "wos": 12.5, "wos_status": "HEALTHY", "sales_90d": 28, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 20}, {"sku": "GR-050-BL3", "size": "050", "on_hand": 7, "la": 0, "mil": 7, "wos": 22.8, "wos_status": "OVERSTOCKED", "sales_90d": 4, "streak": 6, "is_slow": true, "avg_cost": 30.1, "po_qty": 0}, {"sku": "GR-080W-BL3", "size": "080W", "on_hand": 18, "la": 0, "mil": 18, "wos": 23.4, "wos_status": "OVERSTOCKED", "sales_90d": 10, "streak": 5, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "GR-070W-BL3", "size": "070W", "on_hand": 17, "la": 0, "mil": 17, "wos": 44.2, "wos_status": "OVERSTOCKED", "sales_90d": 5, "streak": 6, "is_slow": true, "avg_cost": 30.1, "po_qty": 0}, {"sku": "GR-120-BL3", "size": "120", "on_hand": 12, "la": 0, "mil": 12, "wos": 78.0, "wos_status": "OVERSTOCKED", "sales_90d": 2, "streak": 6, "is_slow": true, "avg_cost": 30.1, "po_qty": 0}], "GR-BT1": [{"sku": "GR-050-BT1", "size": "050", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-060-BT1", "size": "060", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-065-BT1", "size": "065", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-070-BT1", "size": "070", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-070W-BT1", "size": "070W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-075-BT1", "size": "075", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-075W-BT1", "size": "075W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-080-BT1", "size": "080", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-080W-BT1", "size": "080W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-085-BT1", "size": "085", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-085W-BT1", "size": "085W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-090-BT1", "size": "090", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-090W-BT1", "size": "090W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-095-BT1", "size": "095", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-095W-BT1", "size": "095W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-100-BT1", "size": "100", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-100W-BT1", "size": "100W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-110-BT1", "size": "110", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-120-BT1", "size": "120", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "GR-130-BT1", "size": "130", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}], "HZ-BL1": [{"sku": "HZ-070-BL1", "size": "070", "on_hand": 5, "la": 0, "mil": 5, "wos": 4.3, "wos_status": "LOW", "sales_90d": 15, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 12}, {"sku": "HZ-100-BL1", "size": "100", "on_hand": 6, "la": 0, "mil": 6, "wos": 6.0, "wos_status": "LOW", "sales_90d": 13, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "HZ-095-BL1", "size": "095", "on_hand": 8, "la": 0, "mil": 8, "wos": 7.4, "wos_status": "LOW", "sales_90d": 14, "streak": 5, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "HZ-075-BL1", "size": "075", "on_hand": 13, "la": 0, "mil": 13, "wos": 12.1, "wos_status": "HEALTHY", "sales_90d": 14, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "HZ-090-BL1", "size": "090", "on_hand": 21, "la": 0, "mil": 21, "wos": 13.0, "wos_status": "HEALTHY", "sales_90d": 21, "streak": 4, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "HZ-080-BL1", "size": "080", "on_hand": 15, "la": 0, "mil": 15, "wos": 13.9, "wos_status": "HEALTHY", "sales_90d": 14, "streak": 5, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "HZ-060-BL1", "size": "060", "on_hand": 9, "la": 0, "mil": 9, "wos": 16.7, "wos_status": "WATCH", "sales_90d": 7, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "HZ-085-BL1", "size": "085", "on_hand": 20, "la": 0, "mil": 20, "wos": 17.3, "wos_status": "WATCH", "sales_90d": 15, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "HZ-050-BL1", "size": "050", "on_hand": 5, "la": 0, "mil": 5, "wos": 21.7, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 60.2, "po_qty": 0}, {"sku": "HZ-110-BL1", "size": "110", "on_hand": 9, "la": 0, "mil": 9, "wos": 23.4, "wos_status": "OVERSTOCKED", "sales_90d": 5, "streak": 6, "is_slow": true, "avg_cost": 60.2, "po_qty": 0}, {"sku": "HZ-065-BL1", "size": "065", "on_hand": 14, "la": 0, "mil": 14, "wos": 30.3, "wos_status": "OVERSTOCKED", "sales_90d": 6, "streak": 5, "is_slow": true, "avg_cost": 30.1, "po_qty": 0}, {"sku": "HZ-120-BL1", "size": "120", "on_hand": 5, "la": 0, "mil": 5, "wos": 32.5, "wos_status": "OVERSTOCKED", "sales_90d": 2, "streak": 6, "is_slow": true, "avg_cost": 60.2, "po_qty": 0}, {"sku": "HZ-130-BL1", "size": "130", "on_hand": 6, "la": 0, "mil": 6, "wos": 39.0, "wos_status": "OVERSTOCKED", "sales_90d": 2, "streak": 3, "is_slow": true, "avg_cost": 30.1, "po_qty": 0}], "HZ-TN1": [{"sku": "HZ-075-TN1", "size": "075", "on_hand": 2, "la": 0, "mil": 2, "wos": 1.4, "wos_status": "CRITICAL", "sales_90d": 18, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "HZ-070-TN1", "size": "070", "on_hand": 3, "la": 0, "mil": 3, "wos": 1.7, "wos_status": "CRITICAL", "sales_90d": 23, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 28}, {"sku": "HZ-095-TN1", "size": "095", "on_hand": 4, "la": 0, "mil": 4, "wos": 4.3, "wos_status": "LOW", "sales_90d": 12, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 12}, {"sku": "HZ-085-TN1", "size": "085", "on_hand": 9, "la": 0, "mil": 9, "wos": 6.2, "wos_status": "LOW", "sales_90d": 19, "streak": 4, "is_slow": false, "avg_cost": 30.1, "po_qty": 12}, {"sku": "HZ-065-TN1", "size": "065", "on_hand": 7, "la": 0, "mil": 7, "wos": 9.1, "wos_status": "HEALTHY", "sales_90d": 10, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "HZ-080-TN1", "size": "080", "on_hand": 13, "la": 0, "mil": 13, "wos": 9.4, "wos_status": "HEALTHY", "sales_90d": 18, "streak": 5, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "HZ-100-TN1", "size": "100", "on_hand": 12, "la": 0, "mil": 12, "wos": 9.8, "wos_status": "HEALTHY", "sales_90d": 16, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "HZ-090-TN1", "size": "090", "on_hand": 14, "la": 0, "mil": 14, "wos": 14.0, "wos_status": "HEALTHY", "sales_90d": 13, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "HZ-110-TN1", "size": "110", "on_hand": 6, "la": 0, "mil": 6, "wos": 15.6, "wos_status": "HEALTHY", "sales_90d": 5, "streak": 6, "is_slow": false, "avg_cost": 30.1, "po_qty": 0}, {"sku": "HZ-120-TN1", "size": "120", "on_hand": 6, "la": 0, "mil": 6, "wos": 15.6, "wos_status": "HEALTHY", "sales_90d": 5, "streak": 6, "is_slow": false, "avg_cost": 60.2, "po_qty": 0}, {"sku": "HZ-050-TN1", "size": "050", "on_hand": 5, "la": 0, "mil": 5, "wos": 16.2, "wos_status": "WATCH", "sales_90d": 4, "streak": 6, "is_slow": false, "avg_cost": 60.2, "po_qty": 0}, {"sku": "HZ-130-TN1", "size": "130", "on_hand": 5, "la": 0, "mil": 5, "wos": 21.7, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 30.1, "po_qty": 0}, {"sku": "HZ-060-TN1", "size": "060", "on_hand": 12, "la": 0, "mil": 12, "wos": 31.2, "wos_status": "OVERSTOCKED", "sales_90d": 5, "streak": 6, "is_slow": true, "avg_cost": 30.1, "po_qty": 0}], "IN-BL1": [{"sku": "IN-050-BL1", "size": "050", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-060-BL1", "size": "060", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-065-BL1", "size": "065", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-070-BL1", "size": "070", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-070W-BL1", "size": "070W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-075-BL1", "size": "075", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-075W-BL1", "size": "075W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-080-BL1", "size": "080", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-080W-BL1", "size": "080W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-085-BL1", "size": "085", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-085W-BL1", "size": "085W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-090-BL1", "size": "090", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-090W-BL1", "size": "090W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-095-BL1", "size": "095", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-095W-BL1", "size": "095W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-100-BL1", "size": "100", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-100W-BL1", "size": "100W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-110-BL1", "size": "110", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-120-BL1", "size": "120", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}], "IN-DT1": [{"sku": "IN-050-DT1", "size": "050", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-060-DT1", "size": "060", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 2, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-065-DT1", "size": "065", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-070-DT1", "size": "070", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-070W-DT1", "size": "070W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-075-DT1", "size": "075", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-075W-DT1", "size": "075W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-080-DT1", "size": "080", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-080W-DT1", "size": "080W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-085-DT1", "size": "085", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-085W-DT1", "size": "085W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-090-DT1", "size": "090", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-090W-DT1", "size": "090W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-095-DT1", "size": "095", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-095W-DT1", "size": "095W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-100-DT1", "size": "100", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-100W-DT1", "size": "100W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-110-DT1", "size": "110", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "IN-120-DT1", "size": "120", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}], "LN-BB1": [{"sku": "LN-055-BB1", "size": "055", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": 7, "streak": 3, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "LN-110-BB1", "size": "110", "on_hand": 7, "la": 7, "mil": 0, "wos": 18.2, "wos_status": "WATCH", "sales_90d": 5, "streak": 5, "is_slow": false, "avg_cost": 36.4, "po_qty": 0}, {"sku": "LN-050-BB1", "size": "050", "on_hand": 9, "la": 9, "mil": 0, "wos": 23.4, "wos_status": "WATCH", "sales_90d": 5, "streak": 5, "is_slow": false, "avg_cost": 4.04, "po_qty": 0}, {"sku": "LN-095-BB1", "size": "095", "on_hand": 32, "la": 32, "mil": 0, "wos": 32.0, "wos_status": "OVERSTOCKED", "sales_90d": 13, "streak": 5, "is_slow": false, "avg_cost": 25.02, "po_qty": 0}, {"sku": "LN-085-BB1", "size": "085", "on_hand": 79, "la": 79, "mil": 0, "wos": 36.7, "wos_status": "OVERSTOCKED", "sales_90d": 28, "streak": 5, "is_slow": false, "avg_cost": 14.28, "po_qty": 0}, {"sku": "LN-100-BB1", "size": "100", "on_hand": 44, "la": 44, "mil": 0, "wos": 40.9, "wos_status": "OVERSTOCKED", "sales_90d": 14, "streak": 5, "is_slow": false, "avg_cost": 11.58, "po_qty": 0}, {"sku": "LN-120-BB1", "size": "120", "on_hand": 8, "la": 8, "mil": 0, "wos": 52.0, "wos_status": "OVERSTOCKED", "sales_90d": 2, "streak": 5, "is_slow": true, "avg_cost": 36.4, "po_qty": 0}, {"sku": "LN-060-BB1", "size": "060", "on_hand": 46, "la": 46, "mil": 0, "wos": 59.8, "wos_status": "OVERSTOCKED", "sales_90d": 10, "streak": 5, "is_slow": false, "avg_cost": 28.49, "po_qty": 0}, {"sku": "LN-065-BB1", "size": "065", "on_hand": 58, "la": 58, "mil": 0, "wos": 75.4, "wos_status": "OVERSTOCKED", "sales_90d": 10, "streak": 5, "is_slow": false, "avg_cost": 15.06, "po_qty": 0}, {"sku": "LN-080-BB1", "size": "080", "on_hand": 101, "la": 101, "mil": 0, "wos": 82.1, "wos_status": "OVERSTOCKED", "sales_90d": 16, "streak": 5, "is_slow": false, "avg_cost": 15.32, "po_qty": 0}, {"sku": "LN-070-BB1", "size": "070", "on_hand": 99, "la": 99, "mil": 0, "wos": 85.8, "wos_status": "OVERSTOCKED", "sales_90d": 15, "streak": 5, "is_slow": false, "avg_cost": 32.72, "po_qty": 0}, {"sku": "LN-075-BB1", "size": "075", "on_hand": 97, "la": 97, "mil": 0, "wos": 105.1, "wos_status": "OVERSTOCKED", "sales_90d": 12, "streak": 5, "is_slow": false, "avg_cost": 15.2, "po_qty": 0}, {"sku": "LN-090-BB1", "size": "090", "on_hand": 91, "la": 91, "mil": 0, "wos": 107.5, "wos_status": "OVERSTOCKED", "sales_90d": 11, "streak": 5, "is_slow": false, "avg_cost": 30.0, "po_qty": 0}], "LN-BL1": [{"sku": "LN-095-BL1", "size": "095", "on_hand": 53, "la": 52, "mil": 1, "wos": 27.6, "wos_status": "WATCH", "sales_90d": 25, "streak": 5, "is_slow": false, "avg_cost": 32.2, "po_qty": 0}, {"sku": "LN-055-BL1", "size": "055", "on_hand": 15, "la": 15, "mil": 0, "wos": 32.5, "wos_status": "OVERSTOCKED", "sales_90d": 6, "streak": 5, "is_slow": true, "avg_cost": 12.13, "po_qty": 0}, {"sku": "LN-050-BL1", "size": "050", "on_hand": 21, "la": 21, "mil": 0, "wos": 45.5, "wos_status": "OVERSTOCKED", "sales_90d": 6, "streak": 5, "is_slow": true, "avg_cost": 19.07, "po_qty": 0}, {"sku": "LN-100-BL1", "size": "100", "on_hand": 78, "la": 76, "mil": 2, "wos": 72.4, "wos_status": "OVERSTOCKED", "sales_90d": 14, "streak": 5, "is_slow": false, "avg_cost": 32.09, "po_qty": 0}, {"sku": "LN-070-BL1", "size": "070", "on_hand": 167, "la": 167, "mil": 0, "wos": 94.4, "wos_status": "OVERSTOCKED", "sales_90d": 23, "streak": 5, "is_slow": false, "avg_cost": 17.0, "po_qty": 0}, {"sku": "LN-065-BL1", "size": "065", "on_hand": 95, "la": 95, "mil": 0, "wos": 95.0, "wos_status": "OVERSTOCKED", "sales_90d": 13, "streak": 5, "is_slow": false, "avg_cost": 32.19, "po_qty": 0}, {"sku": "LN-085-BL1", "size": "085", "on_hand": 162, "la": 162, "mil": 0, "wos": 105.3, "wos_status": "OVERSTOCKED", "sales_90d": 20, "streak": 5, "is_slow": false, "avg_cost": 16.18, "po_qty": 0}, {"sku": "LN-080-BL1", "size": "080", "on_hand": 172, "la": 172, "mil": 0, "wos": 106.5, "wos_status": "OVERSTOCKED", "sales_90d": 21, "streak": 5, "is_slow": false, "avg_cost": 32.59, "po_qty": 0}, {"sku": "LN-090-BL1", "size": "090", "on_hand": 148, "la": 147, "mil": 1, "wos": 106.9, "wos_status": "OVERSTOCKED", "sales_90d": 18, "streak": 5, "is_slow": false, "avg_cost": 34.17, "po_qty": 0}, {"sku": "LN-075-BL1", "size": "075", "on_hand": 166, "la": 166, "mil": 0, "wos": 107.9, "wos_status": "OVERSTOCKED", "sales_90d": 20, "streak": 5, "is_slow": false, "avg_cost": 16.34, "po_qty": 0}, {"sku": "LN-060-BL1", "size": "060", "on_hand": 83, "la": 83, "mil": 0, "wos": 154.1, "wos_status": "OVERSTOCKED", "sales_90d": 7, "streak": 5, "is_slow": true, "avg_cost": 31.58, "po_qty": 0}, {"sku": "LN-110-BL1", "size": "110", "on_hand": 36, "la": 36, "mil": 0, "wos": 156.0, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 5, "is_slow": true, "avg_cost": 18.2, "po_qty": 0}, {"sku": "LN-120-BL1", "size": "120", "on_hand": 27, "la": 27, "mil": 0, "wos": 351.0, "wos_status": "OVERSTOCKED", "sales_90d": 1, "streak": 5, "is_slow": true, "avg_cost": 36.4, "po_qty": 0}], "NV-BL3": [{"sku": "NV-085W-BL3", "size": "085W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}], "NV-BL4": [{"sku": "NV-050-BL4", "size": "050", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-060-BL4", "size": "060", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-065-BL4", "size": "065", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 1, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-070-BL4", "size": "070", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": 1, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-070W-BL4", "size": "070W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-075-BL4", "size": "075", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-075W-BL4", "size": "075W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-080-BL4", "size": "080", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-080W-BL4", "size": "080W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-085-BL4", "size": "085", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-085W-BL4", "size": "085W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-090-BL4", "size": "090", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-090W-BL4", "size": "090W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-095-BL4", "size": "095", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-095W-BL4", "size": "095W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-100-BL4", "size": "100", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-100W-BL4", "size": "100W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-110-BL4", "size": "110", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-120-BL4", "size": "120", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}], "NV-BL5": [{"sku": "NV-065-BL5", "size": "065", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": 4, "streak": 2, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-095-BL5", "size": "095", "on_hand": 0, "la": -1, "mil": 1, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": 6, "streak": 3, "is_slow": false, "avg_cost": 34.0, "po_qty": 0}, {"sku": "NV-120-BL5", "size": "120", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": 2, "streak": 2, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "NV-085-BL5", "size": "085", "on_hand": 2, "la": 0, "mil": 2, "wos": 3.2, "wos_status": "CRITICAL", "sales_90d": 8, "streak": 6, "is_slow": false, "avg_cost": 34.0, "po_qty": 0}, {"sku": "NV-100-BL5", "size": "100", "on_hand": 2, "la": 0, "mil": 2, "wos": 5.2, "wos_status": "LOW", "sales_90d": 5, "streak": 2, "is_slow": false, "avg_cost": 68.0, "po_qty": 0}, {"sku": "NV-060-BL5", "size": "060", "on_hand": 2, "la": 0, "mil": 2, "wos": 5.2, "wos_status": "LOW", "sales_90d": 5, "streak": 3, "is_slow": false, "avg_cost": 34.0, "po_qty": 0}, {"sku": "NV-090W-BL5", "size": "090W", "on_hand": 3, "la": 0, "mil": 3, "wos": 5.6, "wos_status": "LOW", "sales_90d": 7, "streak": 1, "is_slow": false, "avg_cost": 37.0, "po_qty": 0}, {"sku": "NV-080-BL5", "size": "080", "on_hand": 5, "la": 0, "mil": 5, "wos": 7.2, "wos_status": "LOW", "sales_90d": 9, "streak": 5, "is_slow": false, "avg_cost": 68.0, "po_qty": 0}, {"sku": "NV-070W-BL5", "size": "070W", "on_hand": 3, "la": 0, "mil": 3, "wos": 7.8, "wos_status": "LOW", "sales_90d": 5, "streak": 1, "is_slow": false, "avg_cost": 74.0, "po_qty": 0}, {"sku": "NV-110-BL5", "size": "110", "on_hand": 3, "la": 0, "mil": 3, "wos": 9.8, "wos_status": "HEALTHY", "sales_90d": 4, "streak": 5, "is_slow": false, "avg_cost": 34.0, "po_qty": 0}, {"sku": "NV-090-BL5", "size": "090", "on_hand": 5, "la": 0, "mil": 5, "wos": 13.0, "wos_status": "HEALTHY", "sales_90d": 5, "streak": 3, "is_slow": false, "avg_cost": 34.0, "po_qty": 0}, {"sku": "NV-075W-BL5", "size": "075W", "on_hand": 5, "la": 0, "mil": 5, "wos": 13.0, "wos_status": "HEALTHY", "sales_90d": 5, "streak": 2, "is_slow": false, "avg_cost": 37.0, "po_qty": 0}, {"sku": "NV-050-BL5", "size": "050", "on_hand": 1, "la": 0, "mil": 1, "wos": 13.0, "wos_status": "HEALTHY", "sales_90d": 1, "streak": 6, "is_slow": false, "avg_cost": 68.0, "po_qty": 0}, {"sku": "NV-100W-BL5", "size": "100W", "on_hand": 3, "la": 0, "mil": 3, "wos": 13.0, "wos_status": "HEALTHY", "sales_90d": 3, "streak": 4, "is_slow": false, "avg_cost": 74.0, "po_qty": 0}, {"sku": "NV-075-BL5", "size": "075", "on_hand": 7, "la": 0, "mil": 7, "wos": 13.0, "wos_status": "HEALTHY", "sales_90d": 7, "streak": 2, "is_slow": false, "avg_cost": 34.0, "po_qty": 0}, {"sku": "NV-085W-BL5", "size": "085W", "on_hand": 6, "la": 0, "mil": 6, "wos": 19.5, "wos_status": "WATCH", "sales_90d": 4, "streak": 6, "is_slow": false, "avg_cost": 37.0, "po_qty": 0}, {"sku": "NV-080W-BL5", "size": "080W", "on_hand": 6, "la": 0, "mil": 6, "wos": 19.5, "wos_status": "WATCH", "sales_90d": 4, "streak": 6, "is_slow": false, "avg_cost": 37.0, "po_qty": 0}, {"sku": "NV-070-BL5", "size": "070", "on_hand": 9, "la": 0, "mil": 9, "wos": 39.0, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 3, "is_slow": true, "avg_cost": 34.0, "po_qty": 0}, {"sku": "NV-095W-BL5", "size": "095W", "on_hand": 7, "la": 0, "mil": 7, "wos": 91.0, "wos_status": "OVERSTOCKED", "sales_90d": 1, "streak": 5, "is_slow": true, "avg_cost": 74.0, "po_qty": 0}], "NV-CB1": [{"sku": "NV-050-CB1", "size": "050", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": 1, "streak": 3, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}], "NV-CB2": [{"sku": "NV-090-CB2", "size": "090", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}], "OM-BL2": [{"sku": "OM-075-BL2", "size": "075", "on_hand": 20, "la": 0, "mil": 20, "wos": 5.1, "wos_status": "LOW", "sales_90d": 51, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 20}, {"sku": "OM-085W-BL2", "size": "085W", "on_hand": 13, "la": 0, "mil": 13, "wos": 5.6, "wos_status": "LOW", "sales_90d": 30, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-065-BL2", "size": "065", "on_hand": 19, "la": 0, "mil": 19, "wos": 6.2, "wos_status": "LOW", "sales_90d": 40, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-070W-BL2", "size": "070W", "on_hand": 12, "la": 0, "mil": 12, "wos": 6.2, "wos_status": "LOW", "sales_90d": 25, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 16}, {"sku": "OM-095W-BL2", "size": "095W", "on_hand": 8, "la": 0, "mil": 8, "wos": 6.5, "wos_status": "LOW", "sales_90d": 16, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-060-BL2", "size": "060", "on_hand": 13, "la": 0, "mil": 13, "wos": 6.5, "wos_status": "LOW", "sales_90d": 26, "streak": 5, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-110-BL2", "size": "110", "on_hand": 18, "la": 0, "mil": 18, "wos": 7.3, "wos_status": "LOW", "sales_90d": 32, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-120-BL2", "size": "120", "on_hand": 8, "la": 0, "mil": 8, "wos": 8.7, "wos_status": "HEALTHY", "sales_90d": 12, "streak": 6, "is_slow": false, "avg_cost": 58.0, "po_qty": 0}, {"sku": "OM-070-BL2", "size": "070", "on_hand": 38, "la": 0, "mil": 38, "wos": 11.5, "wos_status": "HEALTHY", "sales_90d": 43, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-080-BL2", "size": "080", "on_hand": 70, "la": 0, "mil": 70, "wos": 13.6, "wos_status": "HEALTHY", "sales_90d": 67, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-095-BL2", "size": "095", "on_hand": 40, "la": 0, "mil": 40, "wos": 15.3, "wos_status": "HEALTHY", "sales_90d": 34, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-075W-BL2", "size": "075W", "on_hand": 18, "la": 0, "mil": 18, "wos": 15.6, "wos_status": "HEALTHY", "sales_90d": 15, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-100-BL2", "size": "100", "on_hand": 36, "la": 0, "mil": 36, "wos": 16.1, "wos_status": "WATCH", "sales_90d": 29, "streak": 5, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-100W-BL2", "size": "100W", "on_hand": 37, "la": 0, "mil": 37, "wos": 16.6, "wos_status": "WATCH", "sales_90d": 29, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-050-BL2", "size": "050", "on_hand": 10, "la": 0, "mil": 10, "wos": 18.6, "wos_status": "WATCH", "sales_90d": 7, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-085-BL2", "size": "085", "on_hand": 73, "la": 0, "mil": 73, "wos": 20.2, "wos_status": "OVERSTOCKED", "sales_90d": 47, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-090-BL2", "size": "090", "on_hand": 76, "la": 0, "mil": 76, "wos": 20.6, "wos_status": "OVERSTOCKED", "sales_90d": 48, "streak": 5, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-080W-BL2", "size": "080W", "on_hand": 39, "la": 0, "mil": 39, "wos": 25.4, "wos_status": "OVERSTOCKED", "sales_90d": 20, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-090W-BL2", "size": "090W", "on_hand": 47, "la": 0, "mil": 47, "wos": 25.5, "wos_status": "OVERSTOCKED", "sales_90d": 24, "streak": 5, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}], "OM-BO2": [{"sku": "OM-075-BO2", "size": "075", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": 26, "streak": 4, "is_slow": false, "avg_cost": 0.0, "po_qty": 28}, {"sku": "OM-090-BO2", "size": "090", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": 35, "streak": 5, "is_slow": false, "avg_cost": 0.0, "po_qty": 32}, {"sku": "OM-085W-BO2", "size": "085W", "on_hand": 3, "la": 0, "mil": 3, "wos": 2.8, "wos_status": "CRITICAL", "sales_90d": 14, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-100-BO2", "size": "100", "on_hand": 3, "la": 0, "mil": 3, "wos": 2.8, "wos_status": "CRITICAL", "sales_90d": 14, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-120-BO2", "size": "120", "on_hand": 3, "la": 0, "mil": 3, "wos": 4.3, "wos_status": "LOW", "sales_90d": 9, "streak": 5, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-070-BO2", "size": "070", "on_hand": 7, "la": 0, "mil": 7, "wos": 4.8, "wos_status": "LOW", "sales_90d": 19, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-085-BO2", "size": "085", "on_hand": 12, "la": 0, "mil": 12, "wos": 5.0, "wos_status": "LOW", "sales_90d": 31, "streak": 5, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-110-BO2", "size": "110", "on_hand": 6, "la": 0, "mil": 6, "wos": 5.2, "wos_status": "LOW", "sales_90d": 15, "streak": 5, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-080W-BO2", "size": "080W", "on_hand": 5, "la": 0, "mil": 5, "wos": 5.9, "wos_status": "LOW", "sales_90d": 11, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-095-BO2", "size": "095", "on_hand": 8, "la": 0, "mil": 8, "wos": 7.4, "wos_status": "LOW", "sales_90d": 14, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-095W-BO2", "size": "095W", "on_hand": 5, "la": 0, "mil": 5, "wos": 9.3, "wos_status": "HEALTHY", "sales_90d": 7, "streak": 6, "is_slow": false, "avg_cost": 58.0, "po_qty": 0}, {"sku": "OM-080-BO2", "size": "080", "on_hand": 18, "la": 0, "mil": 18, "wos": 9.8, "wos_status": "HEALTHY", "sales_90d": 24, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-075W-BO2", "size": "075W", "on_hand": 5, "la": 0, "mil": 5, "wos": 10.8, "wos_status": "HEALTHY", "sales_90d": 6, "streak": 5, "is_slow": false, "avg_cost": 58.0, "po_qty": 0}, {"sku": "OM-090W-BO2", "size": "090W", "on_hand": 8, "la": 0, "mil": 8, "wos": 11.6, "wos_status": "HEALTHY", "sales_90d": 9, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-065-BO2", "size": "065", "on_hand": 12, "la": 0, "mil": 12, "wos": 12.0, "wos_status": "HEALTHY", "sales_90d": 13, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-060-BO2", "size": "060", "on_hand": 9, "la": 0, "mil": 9, "wos": 14.6, "wos_status": "HEALTHY", "sales_90d": 8, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-070W-BO2", "size": "070W", "on_hand": 7, "la": 0, "mil": 7, "wos": 18.2, "wos_status": "WATCH", "sales_90d": 5, "streak": 6, "is_slow": false, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-100W-BO2", "size": "100W", "on_hand": 14, "la": 0, "mil": 14, "wos": 20.2, "wos_status": "OVERSTOCKED", "sales_90d": 9, "streak": 2, "is_slow": true, "avg_cost": 29.0, "po_qty": 0}, {"sku": "OM-050-BO2", "size": "050", "on_hand": 6, "la": 0, "mil": 6, "wos": 39.0, "wos_status": "OVERSTOCKED", "sales_90d": 2, "streak": 6, "is_slow": true, "avg_cost": 29.0, "po_qty": 0}], "OM-GY1": [{"sku": "OM-060-GY1", "size": "060", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-065-GY1", "size": "065", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-070-GY1", "size": "070", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-075-GY1", "size": "075", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-080-GY1", "size": "080", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-085W-GY1", "size": "085W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 2, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-085-GY1", "size": "085", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 2, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-080W-GY1", "size": "080W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 2, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-090W-GY1", "size": "090W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-095-GY1", "size": "095", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-095W-GY1", "size": "095W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-090-GY1", "size": "090", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-100-GY1", "size": "100", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-120-GY1", "size": "120", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-110-GY1", "size": "110", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-100W-GY1", "size": "100W", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 0, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "OM-070W-GY1", "size": "070W", "on_hand": 1, "la": 0, "mil": 1, "wos": 4.3, "wos_status": "LOW", "sales_90d": 3, "streak": 6, "is_slow": false, "avg_cost": 46.2, "po_qty": 0}, {"sku": "OM-075W-GY1", "size": "075W", "on_hand": 2, "la": 0, "mil": 2, "wos": 5.2, "wos_status": "LOW", "sales_90d": 5, "streak": 6, "is_slow": false, "avg_cost": 46.2, "po_qty": 0}, {"sku": "OM-050-GY1", "size": "050", "on_hand": 3, "la": 0, "mil": 3, "wos": 19.5, "wos_status": "WATCH", "sales_90d": 2, "streak": 6, "is_slow": false, "avg_cost": 46.2, "po_qty": 0}], "RO-BL1": [{"sku": "RO-095-BL1", "size": "095", "on_hand": 19, "la": 0, "mil": 19, "wos": 15.4, "wos_status": "HEALTHY", "sales_90d": 16, "streak": 6, "is_slow": false, "avg_cost": 28.0, "po_qty": 0}, {"sku": "RO-110-BL1", "size": "110", "on_hand": 9, "la": 0, "mil": 9, "wos": 16.7, "wos_status": "WATCH", "sales_90d": 7, "streak": 6, "is_slow": false, "avg_cost": 28.0, "po_qty": 0}, {"sku": "RO-090-BL1", "size": "090", "on_hand": 21, "la": 0, "mil": 21, "wos": 19.5, "wos_status": "WATCH", "sales_90d": 14, "streak": 6, "is_slow": false, "avg_cost": 28.0, "po_qty": 0}, {"sku": "RO-070-BL1", "size": "070", "on_hand": 15, "la": 0, "mil": 15, "wos": 21.7, "wos_status": "OVERSTOCKED", "sales_90d": 9, "streak": 6, "is_slow": true, "avg_cost": 28.0, "po_qty": 0}, {"sku": "RO-075-BL1", "size": "075", "on_hand": 24, "la": 0, "mil": 24, "wos": 24.0, "wos_status": "OVERSTOCKED", "sales_90d": 13, "streak": 6, "is_slow": false, "avg_cost": 28.0, "po_qty": 0}, {"sku": "RO-080-BL1", "size": "080", "on_hand": 23, "la": 0, "mil": 23, "wos": 24.9, "wos_status": "OVERSTOCKED", "sales_90d": 12, "streak": 6, "is_slow": false, "avg_cost": 28.0, "po_qty": 0}, {"sku": "RO-100-BL1", "size": "100", "on_hand": 20, "la": 0, "mil": 20, "wos": 26.0, "wos_status": "OVERSTOCKED", "sales_90d": 10, "streak": 6, "is_slow": false, "avg_cost": 28.0, "po_qty": 0}, {"sku": "RO-085-BL1", "size": "085", "on_hand": 33, "la": 0, "mil": 33, "wos": 39.0, "wos_status": "OVERSTOCKED", "sales_90d": 11, "streak": 6, "is_slow": false, "avg_cost": 28.0, "po_qty": 0}, {"sku": "RO-065-BL1", "size": "065", "on_hand": 15, "la": 0, "mil": 15, "wos": 65.0, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 56.0, "po_qty": 0}, {"sku": "RO-050-BL1", "size": "050", "on_hand": 7, "la": 0, "mil": 7, "wos": 91.0, "wos_status": "OVERSTOCKED", "sales_90d": 1, "streak": 6, "is_slow": true, "avg_cost": 56.0, "po_qty": 0}, {"sku": "RO-120-BL1", "size": "120", "on_hand": 8, "la": 0, "mil": 8, "wos": 104.0, "wos_status": "OVERSTOCKED", "sales_90d": 1, "streak": 6, "is_slow": true, "avg_cost": 28.0, "po_qty": 0}, {"sku": "RO-060-BL1", "size": "060", "on_hand": 11, "la": 0, "mil": 11, "wos": 143.0, "wos_status": "OVERSTOCKED", "sales_90d": 1, "streak": 6, "is_slow": true, "avg_cost": 28.0, "po_qty": 0}], "RO-SO-BL1": [{"sku": "RO-SO-050-BL1", "size": "050", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": null, "streak": 2, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "RO-SO-120-BL1", "size": "120", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": 1, "streak": 5, "is_slow": false, "avg_cost": 0.0, "po_qty": 0}, {"sku": "RO-SO-090-BL1", "size": "090", "on_hand": 1, "la": 0, "mil": 1, "wos": 4.3, "wos_status": "LOW", "sales_90d": 3, "streak": 1, "is_slow": false, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-095-BL1", "size": "095", "on_hand": 2, "la": 0, "mil": 2, "wos": 8.7, "wos_status": "HEALTHY", "sales_90d": 3, "streak": 6, "is_slow": false, "avg_cost": 26.0, "po_qty": 0}, {"sku": "RO-SO-080-BL1", "size": "080", "on_hand": 4, "la": 0, "mil": 4, "wos": 13.0, "wos_status": "HEALTHY", "sales_90d": null, "streak": 6, "is_slow": false, "avg_cost": 26.0, "po_qty": 0}, {"sku": "RO-SO-085-BL1", "size": "085", "on_hand": 3, "la": 0, "mil": 3, "wos": 19.5, "wos_status": "WATCH", "sales_90d": 2, "streak": 4, "is_slow": false, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-110-BL1", "size": "110", "on_hand": 1, "la": 0, "mil": 1, "wos": 26.0, "wos_status": "OVERSTOCKED", "sales_90d": null, "streak": 6, "is_slow": true, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-100-BL1", "size": "100", "on_hand": 3, "la": 0, "mil": 3, "wos": 39.0, "wos_status": "OVERSTOCKED", "sales_90d": null, "streak": 6, "is_slow": true, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-075-BL1", "size": "075", "on_hand": 4, "la": 0, "mil": 4, "wos": 52.0, "wos_status": "OVERSTOCKED", "sales_90d": 1, "streak": 6, "is_slow": true, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-060-BL1", "size": "060", "on_hand": 4, "la": 0, "mil": 4, "wos": 52.0, "wos_status": "OVERSTOCKED", "sales_90d": 1, "streak": 6, "is_slow": true, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-070-BL1", "size": "070", "on_hand": 3, "la": 0, "mil": 3, "wos": 78.0, "wos_status": "OVERSTOCKED", "sales_90d": null, "streak": 5, "is_slow": true, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-065-BL1", "size": "065", "on_hand": 4, "la": 0, "mil": 4, "wos": 208.0, "wos_status": "OVERSTOCKED", "sales_90d": null, "streak": 6, "is_slow": true, "avg_cost": 52.0, "po_qty": 0}], "RO-SO-WH1": [{"sku": "RO-SO-100-WH1", "size": "100", "on_hand": 2, "la": 0, "mil": 2, "wos": 13.0, "wos_status": "HEALTHY", "sales_90d": 2, "streak": 6, "is_slow": false, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-075-WH1", "size": "075", "on_hand": 3, "la": 0, "mil": 3, "wos": 19.5, "wos_status": "WATCH", "sales_90d": 2, "streak": 6, "is_slow": false, "avg_cost": 26.0, "po_qty": 0}, {"sku": "RO-SO-095-WH1", "size": "095", "on_hand": 4, "la": 0, "mil": 4, "wos": 52.0, "wos_status": "OVERSTOCKED", "sales_90d": 1, "streak": 6, "is_slow": true, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-110-WH1", "size": "110", "on_hand": 2, "la": 0, "mil": 2, "wos": 52.0, "wos_status": "OVERSTOCKED", "sales_90d": null, "streak": 6, "is_slow": true, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-065-WH1", "size": "065", "on_hand": 5, "la": 0, "mil": 5, "wos": 65.0, "wos_status": "OVERSTOCKED", "sales_90d": null, "streak": 6, "is_slow": true, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-080-WH1", "size": "080", "on_hand": 17, "la": 0, "mil": 17, "wos": 73.7, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-085-WH1", "size": "085", "on_hand": 8, "la": 0, "mil": 8, "wos": 104.0, "wos_status": "OVERSTOCKED", "sales_90d": null, "streak": 6, "is_slow": true, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-070-WH1", "size": "070", "on_hand": 7, "la": 0, "mil": 7, "wos": 182.0, "wos_status": "OVERSTOCKED", "sales_90d": null, "streak": 6, "is_slow": true, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-090-WH1", "size": "090", "on_hand": 7, "la": 0, "mil": 7, "wos": 182.0, "wos_status": "OVERSTOCKED", "sales_90d": null, "streak": 6, "is_slow": true, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-060-WH1", "size": "060", "on_hand": 6, "la": 0, "mil": 6, "wos": 312.0, "wos_status": "OVERSTOCKED", "sales_90d": null, "streak": 6, "is_slow": true, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-050-WH1", "size": "050", "on_hand": 3, "la": 0, "mil": 3, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 6, "is_slow": false, "avg_cost": 52.0, "po_qty": 0}, {"sku": "RO-SO-120-WH1", "size": "120", "on_hand": 3, "la": 0, "mil": 3, "wos": null, "wos_status": "NO VELOCITY", "sales_90d": null, "streak": 6, "is_slow": false, "avg_cost": 52.0, "po_qty": 0}], "RO-WH1": [{"sku": "RO-095-WH1", "size": "095", "on_hand": 1, "la": 0, "mil": 1, "wos": 0.6, "wos_status": "CRITICAL", "sales_90d": 21, "streak": 6, "is_slow": false, "avg_cost": 28.0, "po_qty": 20}, {"sku": "RO-110-WH1", "size": "110", "on_hand": 1, "la": 0, "mil": 1, "wos": 1.3, "wos_status": "CRITICAL", "sales_90d": 10, "streak": 6, "is_slow": false, "avg_cost": 28.0, "po_qty": 16}, {"sku": "RO-070-WH1", "size": "070", "on_hand": 10, "la": 0, "mil": 10, "wos": 5.7, "wos_status": "LOW", "sales_90d": 23, "streak": 6, "is_slow": false, "avg_cost": 28.0, "po_qty": 12}, {"sku": "RO-085-WH1", "size": "085", "on_hand": 19, "la": 0, "mil": 19, "wos": 9.9, "wos_status": "HEALTHY", "sales_90d": 25, "streak": 6, "is_slow": false, "avg_cost": 28.0, "po_qty": 0}, {"sku": "RO-080-WH1", "size": "080", "on_hand": 25, "la": 0, "mil": 25, "wos": 11.2, "wos_status": "HEALTHY", "sales_90d": 29, "streak": 6, "is_slow": false, "avg_cost": 28.0, "po_qty": 0}, {"sku": "RO-075-WH1", "size": "075", "on_hand": 18, "la": 0, "mil": 18, "wos": 13.8, "wos_status": "HEALTHY", "sales_90d": 17, "streak": 6, "is_slow": false, "avg_cost": 28.0, "po_qty": 0}, {"sku": "RO-090-WH1", "size": "090", "on_hand": 27, "la": 0, "mil": 27, "wos": 14.6, "wos_status": "HEALTHY", "sales_90d": 24, "streak": 6, "is_slow": false, "avg_cost": 28.0, "po_qty": 0}, {"sku": "RO-060-WH1", "size": "060", "on_hand": 10, "la": 0, "mil": 10, "wos": 16.2, "wos_status": "WATCH", "sales_90d": 8, "streak": 6, "is_slow": false, "avg_cost": 56.0, "po_qty": 0}, {"sku": "RO-100-WH1", "size": "100", "on_hand": 16, "la": 0, "mil": 16, "wos": 17.3, "wos_status": "WATCH", "sales_90d": 12, "streak": 6, "is_slow": false, "avg_cost": 28.0, "po_qty": 0}, {"sku": "RO-050-WH1", "size": "050", "on_hand": 5, "la": 0, "mil": 5, "wos": 21.7, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 56.0, "po_qty": 0}, {"sku": "RO-065-WH1", "size": "065", "on_hand": 21, "la": 0, "mil": 21, "wos": 39.0, "wos_status": "OVERSTOCKED", "sales_90d": 7, "streak": 6, "is_slow": true, "avg_cost": 28.0, "po_qty": 0}, {"sku": "RO-120-WH1", "size": "120", "on_hand": 7, "la": 0, "mil": 7, "wos": 45.5, "wos_status": "OVERSTOCKED", "sales_90d": 2, "streak": 6, "is_slow": true, "avg_cost": 28.0, "po_qty": 0}], "SP-AU2": [{"sku": "SP-080-AU2", "size": "080", "on_hand": 0, "la": 0, "mil": 0, "wos": 0.0, "wos_status": "ZERO STOCK", "sales_90d": 21, "streak": 4, "is_slow": false, "avg_cost": 0.0, "po_qty": 28}, {"sku": "SP-090W-AU2", "size": "090W", "on_hand": 1, "la": 0, "mil": 1, "wos": 1.4, "wos_status": "CRITICAL", "sales_90d": 9, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 16}, {"sku": "SP-065-AU2", "size": "065", "on_hand": 5, "la": 0, "mil": 5, "wos": 5.9, "wos_status": "LOW", "sales_90d": 11, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-075-AU2", "size": "075", "on_hand": 9, "la": 0, "mil": 9, "wos": 6.5, "wos_status": "LOW", "sales_90d": 18, "streak": 5, "is_slow": false, "avg_cost": 31.0, "po_qty": 16}, {"sku": "SP-120-AU2", "size": "120", "on_hand": 3, "la": 0, "mil": 3, "wos": 6.5, "wos_status": "LOW", "sales_90d": 6, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-070-AU2", "size": "070", "on_hand": 13, "la": 0, "mil": 13, "wos": 11.3, "wos_status": "HEALTHY", "sales_90d": 15, "streak": 5, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-110-AU2", "size": "110", "on_hand": 7, "la": 0, "mil": 7, "wos": 11.4, "wos_status": "HEALTHY", "sales_90d": 8, "streak": 2, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-095-AU2", "size": "095", "on_hand": 11, "la": 0, "mil": 11, "wos": 14.3, "wos_status": "HEALTHY", "sales_90d": 10, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-085-AU2", "size": "085", "on_hand": 22, "la": 0, "mil": 22, "wos": 15.1, "wos_status": "HEALTHY", "sales_90d": 19, "streak": 5, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-095W-AU2", "size": "095W", "on_hand": 7, "la": 0, "mil": 7, "wos": 15.2, "wos_status": "HEALTHY", "sales_90d": 6, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-100-AU2", "size": "100", "on_hand": 12, "la": 0, "mil": 12, "wos": 17.3, "wos_status": "WATCH", "sales_90d": 9, "streak": 6, "is_slow": false, "avg_cost": 62.0, "po_qty": 0}, {"sku": "SP-075W-AU2", "size": "075W", "on_hand": 8, "la": 0, "mil": 8, "wos": 17.3, "wos_status": "WATCH", "sales_90d": 6, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-060-AU2", "size": "060", "on_hand": 8, "la": 0, "mil": 8, "wos": 17.3, "wos_status": "WATCH", "sales_90d": 6, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-090-AU2", "size": "090", "on_hand": 26, "la": 0, "mil": 26, "wos": 28.2, "wos_status": "OVERSTOCKED", "sales_90d": 12, "streak": 5, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-070W-AU2", "size": "070W", "on_hand": 8, "la": 0, "mil": 8, "wos": 34.7, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-100W-AU2", "size": "100W", "on_hand": 11, "la": 0, "mil": 11, "wos": 35.8, "wos_status": "OVERSTOCKED", "sales_90d": 4, "streak": 6, "is_slow": true, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-085W-AU2", "size": "085W", "on_hand": 13, "la": 0, "mil": 13, "wos": 56.3, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-080W-AU2", "size": "080W", "on_hand": 18, "la": 0, "mil": 18, "wos": 58.5, "wos_status": "OVERSTOCKED", "sales_90d": 4, "streak": 5, "is_slow": true, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-050-AU2", "size": "050", "on_hand": 7, "la": 0, "mil": 7, "wos": 60.7, "wos_status": "OVERSTOCKED", "sales_90d": null, "streak": 6, "is_slow": true, "avg_cost": 31.0, "po_qty": 0}], "SP-BL2": [{"sku": "SP-085W-BL2", "size": "085W", "on_hand": 8, "la": 0, "mil": 8, "wos": 4.0, "wos_status": "LOW", "sales_90d": 26, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 16}, {"sku": "SP-120-BL2", "size": "120", "on_hand": 5, "la": 0, "mil": 5, "wos": 5.9, "wos_status": "LOW", "sales_90d": 11, "streak": 5, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-065-BL2", "size": "065", "on_hand": 13, "la": 0, "mil": 13, "wos": 7.7, "wos_status": "LOW", "sales_90d": 22, "streak": 5, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-095W-BL2", "size": "095W", "on_hand": 12, "la": 0, "mil": 12, "wos": 8.2, "wos_status": "HEALTHY", "sales_90d": 19, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-060-BL2", "size": "060", "on_hand": 10, "la": 0, "mil": 10, "wos": 9.3, "wos_status": "HEALTHY", "sales_90d": 14, "streak": 5, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-070-BL2", "size": "070", "on_hand": 28, "la": 0, "mil": 28, "wos": 13.5, "wos_status": "HEALTHY", "sales_90d": 27, "streak": 5, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-070W-BL2", "size": "070W", "on_hand": 13, "la": 0, "mil": 13, "wos": 14.1, "wos_status": "HEALTHY", "sales_90d": 12, "streak": 5, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-050-BL2", "size": "050", "on_hand": 8, "la": 0, "mil": 8, "wos": 14.9, "wos_status": "HEALTHY", "sales_90d": 7, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-075-BL2", "size": "075", "on_hand": 36, "la": 0, "mil": 36, "wos": 16.1, "wos_status": "WATCH", "sales_90d": 29, "streak": 5, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-100W-BL2", "size": "100W", "on_hand": 20, "la": 0, "mil": 20, "wos": 16.2, "wos_status": "WATCH", "sales_90d": 16, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-080-BL2", "size": "080", "on_hand": 48, "la": 0, "mil": 48, "wos": 17.3, "wos_status": "WATCH", "sales_90d": 36, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-085-BL2", "size": "085", "on_hand": 44, "la": 0, "mil": 44, "wos": 17.9, "wos_status": "WATCH", "sales_90d": 32, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-080W-BL2", "size": "080W", "on_hand": 29, "la": 0, "mil": 29, "wos": 23.6, "wos_status": "OVERSTOCKED", "sales_90d": 16, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-090-BL2", "size": "090", "on_hand": 50, "la": 0, "mil": 50, "wos": 26.0, "wos_status": "OVERSTOCKED", "sales_90d": 25, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-095-BL2", "size": "095", "on_hand": 38, "la": 0, "mil": 38, "wos": 27.4, "wos_status": "OVERSTOCKED", "sales_90d": 18, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-110-BL2", "size": "110", "on_hand": 28, "la": 0, "mil": 28, "wos": 28.0, "wos_status": "OVERSTOCKED", "sales_90d": 13, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-075W-BL2", "size": "075W", "on_hand": 15, "la": 0, "mil": 15, "wos": 32.5, "wos_status": "OVERSTOCKED", "sales_90d": 6, "streak": 5, "is_slow": true, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-100-BL2", "size": "100", "on_hand": 45, "la": 0, "mil": 45, "wos": 34.4, "wos_status": "OVERSTOCKED", "sales_90d": 17, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-090W-BL2", "size": "090W", "on_hand": 28, "la": 0, "mil": 28, "wos": 52.0, "wos_status": "OVERSTOCKED", "sales_90d": 7, "streak": 6, "is_slow": true, "avg_cost": 31.0, "po_qty": 0}], "SP-MD2": [{"sku": "SP-075-MD2", "size": "075", "on_hand": 1, "la": 0, "mil": 1, "wos": 0.8, "wos_status": "CRITICAL", "sales_90d": 17, "streak": 4, "is_slow": false, "avg_cost": 31.0, "po_qty": 12}, {"sku": "SP-110-MD2", "size": "110", "on_hand": 1, "la": 0, "mil": 1, "wos": 1.4, "wos_status": "CRITICAL", "sales_90d": 9, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 12}, {"sku": "SP-065-MD2", "size": "065", "on_hand": 1, "la": 0, "mil": 1, "wos": 1.6, "wos_status": "CRITICAL", "sales_90d": 8, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-070-MD2", "size": "070", "on_hand": 6, "la": 0, "mil": 6, "wos": 4.6, "wos_status": "LOW", "sales_90d": 17, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-080-MD2", "size": "080", "on_hand": 8, "la": 0, "mil": 8, "wos": 5.5, "wos_status": "LOW", "sales_90d": 19, "streak": 5, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-085-MD2", "size": "085", "on_hand": 9, "la": 0, "mil": 9, "wos": 7.3, "wos_status": "LOW", "sales_90d": 16, "streak": 5, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-060-MD2", "size": "060", "on_hand": 4, "la": 0, "mil": 4, "wos": 7.4, "wos_status": "LOW", "sales_90d": 7, "streak": 5, "is_slow": false, "avg_cost": 62.0, "po_qty": 0}, {"sku": "SP-100-MD2", "size": "100", "on_hand": 9, "la": 0, "mil": 9, "wos": 8.4, "wos_status": "HEALTHY", "sales_90d": 14, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-085W-MD2", "size": "085W", "on_hand": 7, "la": 0, "mil": 7, "wos": 15.2, "wos_status": "HEALTHY", "sales_90d": 6, "streak": 6, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-050-MD2", "size": "050", "on_hand": 6, "la": 0, "mil": 6, "wos": 19.5, "wos_status": "WATCH", "sales_90d": 4, "streak": 6, "is_slow": false, "avg_cost": 62.0, "po_qty": 0}, {"sku": "SP-100W-MD2", "size": "100W", "on_hand": 9, "la": 0, "mil": 9, "wos": 19.5, "wos_status": "WATCH", "sales_90d": 6, "streak": 6, "is_slow": false, "avg_cost": 62.0, "po_qty": 0}, {"sku": "SP-090W-MD2", "size": "090W", "on_hand": 8, "la": 0, "mil": 8, "wos": 20.8, "wos_status": "OVERSTOCKED", "sales_90d": 5, "streak": 6, "is_slow": true, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-095-MD2", "size": "095", "on_hand": 12, "la": 0, "mil": 12, "wos": 22.3, "wos_status": "OVERSTOCKED", "sales_90d": 7, "streak": 5, "is_slow": true, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-090-MD2", "size": "090", "on_hand": 19, "la": 0, "mil": 19, "wos": 22.5, "wos_status": "OVERSTOCKED", "sales_90d": 11, "streak": 5, "is_slow": false, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-095W-MD2", "size": "095W", "on_hand": 10, "la": 0, "mil": 10, "wos": 26.0, "wos_status": "OVERSTOCKED", "sales_90d": 5, "streak": 5, "is_slow": true, "avg_cost": 62.0, "po_qty": 0}, {"sku": "SP-080W-MD2", "size": "080W", "on_hand": 10, "la": 0, "mil": 10, "wos": 32.5, "wos_status": "OVERSTOCKED", "sales_90d": 4, "streak": 6, "is_slow": true, "avg_cost": 62.0, "po_qty": 0}, {"sku": "SP-075W-MD2", "size": "075W", "on_hand": 9, "la": 0, "mil": 9, "wos": 39.0, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 31.0, "po_qty": 0}, {"sku": "SP-120-MD2", "size": "120", "on_hand": 7, "la": 0, "mil": 7, "wos": 91.0, "wos_status": "OVERSTOCKED", "sales_90d": 1, "streak": 6, "is_slow": true, "avg_cost": 62.0, "po_qty": 0}, {"sku": "SP-070W-MD2", "size": "070W", "on_hand": 10, "la": 0, "mil": 10, "wos": 130.0, "wos_status": "OVERSTOCKED", "sales_90d": 1, "streak": 6, "is_slow": true, "avg_cost": 31.0, "po_qty": 0}], "VA-BL2": [{"sku": "VA-065-BL2", "size": "065", "on_hand": 1, "la": 0, "mil": 1, "wos": 0.8, "wos_status": "CRITICAL", "sales_90d": 17, "streak": 5, "is_slow": false, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-060-BL2", "size": "060", "on_hand": 1, "la": 0, "mil": 1, "wos": 1.2, "wos_status": "CRITICAL", "sales_90d": 11, "streak": 6, "is_slow": false, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-085-BL2", "size": "085", "on_hand": 4, "la": 0, "mil": 4, "wos": 2.1, "wos_status": "CRITICAL", "sales_90d": 25, "streak": 6, "is_slow": false, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-070-BL2", "size": "070", "on_hand": 5, "la": 0, "mil": 5, "wos": 2.7, "wos_status": "CRITICAL", "sales_90d": 24, "streak": 5, "is_slow": false, "avg_cost": 27.0, "po_qty": 32}, {"sku": "VA-075-BL2", "size": "075", "on_hand": 6, "la": 0, "mil": 6, "wos": 3.5, "wos_status": "CRITICAL", "sales_90d": 22, "streak": 6, "is_slow": false, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-080-BL2", "size": "080", "on_hand": 9, "la": 0, "mil": 9, "wos": 4.9, "wos_status": "LOW", "sales_90d": 24, "streak": 5, "is_slow": false, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-090-BL2", "size": "090", "on_hand": 11, "la": 0, "mil": 11, "wos": 6.2, "wos_status": "LOW", "sales_90d": 23, "streak": 6, "is_slow": false, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-075W-BL2", "size": "075W", "on_hand": 6, "la": 0, "mil": 6, "wos": 6.5, "wos_status": "LOW", "sales_90d": 12, "streak": 6, "is_slow": false, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-090W-BL2", "size": "090W", "on_hand": 7, "la": -1, "mil": 8, "wos": 6.5, "wos_status": "LOW", "sales_90d": 14, "streak": 6, "is_slow": false, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-110-BL2", "size": "110", "on_hand": 4, "la": 0, "mil": 4, "wos": 6.5, "wos_status": "LOW", "sales_90d": 8, "streak": 6, "is_slow": false, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-100-BL2", "size": "100", "on_hand": 8, "la": 0, "mil": 8, "wos": 7.4, "wos_status": "LOW", "sales_90d": 14, "streak": 6, "is_slow": false, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-070W-BL2", "size": "070W", "on_hand": 6, "la": 0, "mil": 6, "wos": 11.1, "wos_status": "HEALTHY", "sales_90d": 7, "streak": 6, "is_slow": false, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-080W-BL2", "size": "080W", "on_hand": 10, "la": 0, "mil": 10, "wos": 13.0, "wos_status": "HEALTHY", "sales_90d": 10, "streak": 6, "is_slow": false, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-095-BL2", "size": "095", "on_hand": 13, "la": 0, "mil": 13, "wos": 18.8, "wos_status": "WATCH", "sales_90d": 9, "streak": 5, "is_slow": false, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-100W-BL2", "size": "100W", "on_hand": 9, "la": 0, "mil": 9, "wos": 19.5, "wos_status": "WATCH", "sales_90d": 6, "streak": 5, "is_slow": false, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-085W-BL2", "size": "085W", "on_hand": 13, "la": 0, "mil": 13, "wos": 28.2, "wos_status": "OVERSTOCKED", "sales_90d": 6, "streak": 6, "is_slow": true, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-050-BL2", "size": "050", "on_hand": 7, "la": 0, "mil": 7, "wos": 45.5, "wos_status": "OVERSTOCKED", "sales_90d": 2, "streak": 6, "is_slow": true, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-120-BL2", "size": "120", "on_hand": 9, "la": 0, "mil": 9, "wos": 58.5, "wos_status": "OVERSTOCKED", "sales_90d": 2, "streak": 5, "is_slow": true, "avg_cost": 27.0, "po_qty": 0}, {"sku": "VA-095W-BL2", "size": "095W", "on_hand": 17, "la": 0, "mil": 17, "wos": 73.7, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 5, "is_slow": true, "avg_cost": 27.0, "po_qty": 0}], "VA-CB2": [{"sku": "VA-075-CB2", "size": "075", "on_hand": 1, "la": 0, "mil": 1, "wos": 0.6, "wos_status": "CRITICAL", "sales_90d": 22, "streak": 5, "is_slow": false, "avg_cost": 31.5, "po_qty": 32}, {"sku": "VA-070-CB2", "size": "070", "on_hand": 1, "la": 0, "mil": 1, "wos": 0.7, "wos_status": "CRITICAL", "sales_90d": 19, "streak": 6, "is_slow": false, "avg_cost": 31.5, "po_qty": 32}, {"sku": "VA-110-CB2", "size": "110", "on_hand": 1, "la": 0, "mil": 1, "wos": 1.4, "wos_status": "CRITICAL", "sales_90d": 9, "streak": 5, "is_slow": false, "avg_cost": 31.5, "po_qty": 0}, {"sku": "VA-065-CB2", "size": "065", "on_hand": 3, "la": 0, "mil": 3, "wos": 2.3, "wos_status": "CRITICAL", "sales_90d": 17, "streak": 3, "is_slow": false, "avg_cost": 31.5, "po_qty": 0}, {"sku": "VA-080-CB2", "size": "080", "on_hand": 6, "la": 0, "mil": 6, "wos": 2.8, "wos_status": "CRITICAL", "sales_90d": 28, "streak": 6, "is_slow": false, "avg_cost": 31.5, "po_qty": 0}, {"sku": "VA-070W-CB2", "size": "070W", "on_hand": 2, "la": 0, "mil": 2, "wos": 3.2, "wos_status": "CRITICAL", "sales_90d": 8, "streak": 6, "is_slow": false, "avg_cost": 31.5, "po_qty": 0}, {"sku": "VA-060-CB2", "size": "060", "on_hand": 5, "la": 0, "mil": 5, "wos": 3.8, "wos_status": "CRITICAL", "sales_90d": 17, "streak": 6, "is_slow": false, "avg_cost": 31.5, "po_qty": 12}, {"sku": "VA-100-CB2", "size": "100", "on_hand": 4, "la": 0, "mil": 4, "wos": 5.2, "wos_status": "LOW", "sales_90d": 10, "streak": 6, "is_slow": false, "avg_cost": 31.5, "po_qty": 0}, {"sku": "VA-085-CB2", "size": "085", "on_hand": 11, "la": 0, "mil": 11, "wos": 6.5, "wos_status": "LOW", "sales_90d": 22, "streak": 6, "is_slow": false, "avg_cost": 31.5, "po_qty": 0}, {"sku": "VA-090W-CB2", "size": "090W", "on_hand": 5, "la": 0, "mil": 5, "wos": 7.2, "wos_status": "LOW", "sales_90d": 9, "streak": 6, "is_slow": false, "avg_cost": 31.5, "po_qty": 0}, {"sku": "VA-090-CB2", "size": "090", "on_hand": 13, "la": 0, "mil": 13, "wos": 9.4, "wos_status": "HEALTHY", "sales_90d": 18, "streak": 6, "is_slow": false, "avg_cost": 31.5, "po_qty": 0}, {"sku": "VA-095-CB2", "size": "095", "on_hand": 8, "la": 0, "mil": 8, "wos": 14.9, "wos_status": "HEALTHY", "sales_90d": 7, "streak": 6, "is_slow": false, "avg_cost": 31.5, "po_qty": 0}, {"sku": "VA-085W-CB2", "size": "085W", "on_hand": 10, "la": 0, "mil": 10, "wos": 16.2, "wos_status": "WATCH", "sales_90d": 8, "streak": 5, "is_slow": false, "avg_cost": 31.5, "po_qty": 0}, {"sku": "VA-095W-CB2", "size": "095W", "on_hand": 7, "la": 0, "mil": 7, "wos": 18.2, "wos_status": "WATCH", "sales_90d": 5, "streak": 6, "is_slow": false, "avg_cost": 63.0, "po_qty": 0}, {"sku": "VA-100W-CB2", "size": "100W", "on_hand": 8, "la": 0, "mil": 8, "wos": 20.8, "wos_status": "OVERSTOCKED", "sales_90d": 5, "streak": 5, "is_slow": true, "avg_cost": 31.5, "po_qty": 0}, {"sku": "VA-050-CB2", "size": "050", "on_hand": 5, "la": 0, "mil": 5, "wos": 21.7, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 31.5, "po_qty": 0}, {"sku": "VA-120-CB2", "size": "120", "on_hand": 5, "la": 0, "mil": 5, "wos": 21.7, "wos_status": "OVERSTOCKED", "sales_90d": 3, "streak": 6, "is_slow": true, "avg_cost": 31.5, "po_qty": 0}, {"sku": "VA-075W-CB2", "size": "075W", "on_hand": 10, "la": 0, "mil": 10, "wos": 32.5, "wos_status": "OVERSTOCKED", "sales_90d": 4, "streak": 5, "is_slow": true, "avg_cost": 31.5, "po_qty": 0}, {"sku": "VA-080W-CB2", "size": "080W", "on_hand": 14, "la": 0, "mil": 14, "wos": 36.4, "wos_status": "OVERSTOCKED", "sales_90d": 5, "streak": 6, "is_slow": true, "avg_cost": 31.5, "po_qty": 0}]}, "china_reorder": [{"SKU": "ASL-SO-060-BL1", "product_name": "Astra Soft Toe Black size 6", "on_hand_end": 2, "wos": 1.8571428571428568, "wos_status": "CRITICAL", "reorder_point": 16.153846153846153, "order_qty": 26, "avg_cost": 11.9}, {"SKU": "ASL-SO-060-WH1", "product_name": "Astra Soft Toe White size 6", "on_hand_end": 1, "wos": 4.333333333333333, "wos_status": "LOW", "reorder_point": 3.4615384615384617, "order_qty": 6, "avg_cost": 12.9}, {"SKU": "ASL-SO-050-BL1", "product_name": "Astra Soft Toe Black size 5", "on_hand_end": 5, "wos": 8.125, "wos_status": "HEALTHY", "reorder_point": 9.230769230769232, "order_qty": 11, "avg_cost": 23.8}, {"SKU": "ASL-SO-095-BL1", "product_name": "Astra Soft Toe Black size 9.5", "on_hand_end": 9, "wos": 8.357142857142858, "wos_status": "HEALTHY", "reorder_point": 16.153846153846153, "order_qty": 19, "avg_cost": 11.9}, {"SKU": "ASL-SO-090-BL1", "product_name": "Astra Soft Toe Black size 9", "on_hand_end": 16, "wos": 11.555555555555555, "wos_status": "HEALTHY", "reorder_point": 20.76923076923077, "order_qty": 20, "avg_cost": 22.3125}], "mex_uncovered": [{"SKU": "VA-065-BL2", "product_name": "Valence (v2) Vegan Black size 6.5", "on_hand_end": 1, "wos": 0.7647058823529411, "wos_status": "CRITICAL", "order_qty": 20, "avg_cost": 27.0}, {"SKU": "VA-060-BL2", "product_name": "Valence (v2) Vegan Black size 6", "on_hand_end": 1, "wos": 1.181818181818182, "wos_status": "CRITICAL", "order_qty": 13, "avg_cost": 27.0}, {"SKU": "HZ-075-TN1", "product_name": "Horizon Tan size 7.5", "on_hand_end": 2, "wos": 1.4444444444444444, "wos_status": "CRITICAL", "order_qty": 21, "avg_cost": 30.1}, {"SKU": "VA-110-CB2", "product_name": "Valence (v2) Chestnut Brown size 11", "on_hand_end": 1, "wos": 1.4444444444444444, "wos_status": "CRITICAL", "order_qty": 11, "avg_cost": 31.5}, {"SKU": "SP-065-MD2", "product_name": "Spice (v2) Mystic Dune size 6.5", "on_hand_end": 1, "wos": 1.625, "wos_status": "CRITICAL", "order_qty": 9, "avg_cost": 31.0}, {"SKU": "VA-085-BL2", "product_name": "Valence (v2) Vegan Black size 8.5", "on_hand_end": 4, "wos": 2.08, "wos_status": "CRITICAL", "order_qty": 27, "avg_cost": 27.0}, {"SKU": "VA-065-CB2", "product_name": "Valence (v2) Chestnut Brown size 6.5", "on_hand_end": 3, "wos": 2.294117647058824, "wos_status": "CRITICAL", "order_qty": 18, "avg_cost": 31.5}, {"SKU": "GR-095-BL3", "product_name": "Gravity Black size 9.5", "on_hand_end": 5, "wos": 2.708333333333333, "wos_status": "CRITICAL", "order_qty": 25, "avg_cost": 30.1}, {"SKU": "OM-100-BO2", "product_name": "Omega (v2) Bourbon size 10", "on_hand_end": 3, "wos": 2.785714285714286, "wos_status": "CRITICAL", "order_qty": 15, "avg_cost": 29.0}, {"SKU": "VA-080-CB2", "product_name": "Valence (v2) Chestnut Brown size 8", "on_hand_end": 6, "wos": 2.785714285714286, "wos_status": "CRITICAL", "order_qty": 29, "avg_cost": 31.5}, {"SKU": "OM-085W-BO2", "product_name": "Omega (v2) Bourbon size 8.5W", "on_hand_end": 3, "wos": 2.785714285714286, "wos_status": "CRITICAL", "order_qty": 15, "avg_cost": 29.0}, {"SKU": "VA-070W-CB2", "product_name": "Valence (v2) Chestnut Brown size 7W", "on_hand_end": 2, "wos": 3.25, "wos_status": "CRITICAL", "order_qty": 8, "avg_cost": 31.5}, {"SKU": "NV-085-BL5", "product_name": "Nova 2.0 (v2) Black size 8.5", "on_hand_end": 2, "wos": 3.25, "wos_status": "CRITICAL", "order_qty": 8, "avg_cost": 34.0}, {"SKU": "VA-075-BL2", "product_name": "Valence (v2) Vegan Black size 7.5", "on_hand_end": 6, "wos": 3.5454545454545454, "wos_status": "CRITICAL", "order_qty": 22, "avg_cost": 27.0}, {"SKU": "OM-070W-GY1", "product_name": "Omega Vegan Gray size 7W", "on_hand_end": 1, "wos": 4.333333333333333, "wos_status": "LOW", "order_qty": 6, "avg_cost": 46.2}, {"SKU": "OM-120-BO2", "product_name": "Omega (v2) Bourbon size 12", "on_hand_end": 3, "wos": 4.333333333333333, "wos_status": "LOW", "order_qty": 9, "avg_cost": 29.0}, {"SKU": "RO-SO-090-BL1", "product_name": "Rogue (Soft) Black size 9", "on_hand_end": 1, "wos": 4.333333333333333, "wos_status": "LOW", "order_qty": 6, "avg_cost": 52.0}, {"SKU": "GR-095W-BL3", "product_name": "Gravity Black size 9.5W", "on_hand_end": 5, "wos": 4.333333333333334, "wos_status": "LOW", "order_qty": 14, "avg_cost": 30.1}, {"SKU": "SP-070-MD2", "product_name": "Spice (v2) Mystic Dune size 7", "on_hand_end": 6, "wos": 4.588235294117647, "wos_status": "LOW", "order_qty": 15, "avg_cost": 31.0}, {"SKU": "OM-070-BO2", "product_name": "Omega (v2) Bourbon size 7", "on_hand_end": 7, "wos": 4.789473684210527, "wos_status": "LOW", "order_qty": 17, "avg_cost": 29.0}, {"SKU": "VA-080-BL2", "product_name": "Valence (v2) Vegan Black size 8", "on_hand_end": 9, "wos": 4.875, "wos_status": "LOW", "order_qty": 21, "avg_cost": 27.0}, {"SKU": "OM-085-BO2", "product_name": "Omega (v2) Bourbon size 8.5", "on_hand_end": 12, "wos": 5.032258064516129, "wos_status": "LOW", "order_qty": 27, "avg_cost": 29.0}, {"SKU": "VA-100-CB2", "product_name": "Valence (v2) Chestnut Brown size 10", "on_hand_end": 4, "wos": 5.199999999999999, "wos_status": "LOW", "order_qty": 9, "avg_cost": 31.5}, {"SKU": "OM-075W-GY1", "product_name": "Omega Vegan Gray size 7.5W", "on_hand_end": 2, "wos": 5.199999999999999, "wos_status": "LOW", "order_qty": 6, "avg_cost": 46.2}, {"SKU": "NV-060-BL5", "product_name": "Nova 2.0 (v2) Black size 6", "on_hand_end": 2, "wos": 5.199999999999999, "wos_status": "LOW", "order_qty": 6, "avg_cost": 34.0}, {"SKU": "NV-100-BL5", "product_name": "Nova 2.0 (v2) Black size 10", "on_hand_end": 2, "wos": 5.199999999999999, "wos_status": "LOW", "order_qty": 6, "avg_cost": 68.0}, {"SKU": "OM-110-BO2", "product_name": "Omega (v2) Bourbon size 11", "on_hand_end": 6, "wos": 5.2, "wos_status": "LOW", "order_qty": 13, "avg_cost": 29.0}, {"SKU": "SP-080-MD2", "product_name": "Spice (v2) Mystic Dune size 8", "on_hand_end": 8, "wos": 5.473684210526316, "wos_status": "LOW", "order_qty": 16, "avg_cost": 31.0}, {"SKU": "NV-090W-BL5", "product_name": "Nova 2.0 (v2) Black size 9W", "on_hand_end": 3, "wos": 5.571428571428572, "wos_status": "LOW", "order_qty": 6, "avg_cost": 37.0}, {"SKU": "OM-085W-BL2", "product_name": "Omega (v2) Black size 8.5W", "on_hand_end": 13, "wos": 5.633333333333334, "wos_status": "LOW", "order_qty": 24, "avg_cost": 29.0}, {"SKU": "GR-060-BL3", "product_name": "Gravity Black size 6", "on_hand_end": 4, "wos": 5.777777777777778, "wos_status": "LOW", "order_qty": 8, "avg_cost": 30.1}, {"SKU": "OM-080W-BO2", "product_name": "Omega (v2) Bourbon size 8W", "on_hand_end": 5, "wos": 5.909090909090909, "wos_status": "LOW", "order_qty": 9, "avg_cost": 29.0}, {"SKU": "SP-065-AU2", "product_name": "Spice (v2) Dark Lava size 6.5", "on_hand_end": 5, "wos": 5.909090909090909, "wos_status": "LOW", "order_qty": 9, "avg_cost": 31.0}, {"SKU": "SP-120-BL2", "product_name": "Spice (v2) Black size 12", "on_hand_end": 5, "wos": 5.909090909090909, "wos_status": "LOW", "order_qty": 9, "avg_cost": 31.0}, {"SKU": "HZ-100-BL1", "product_name": "Horizon Black size 10", "on_hand_end": 6, "wos": 6.0, "wos_status": "LOW", "order_qty": 10, "avg_cost": 30.1}, {"SKU": "OM-065-BL2", "product_name": "Omega (v2) Black size 6.5", "on_hand_end": 19, "wos": 6.175, "wos_status": "LOW", "order_qty": 31, "avg_cost": 29.0}, {"SKU": "VA-090-BL2", "product_name": "Valence (v2) Vegan Black size 9", "on_hand_end": 11, "wos": 6.217391304347826, "wos_status": "LOW", "order_qty": 18, "avg_cost": 27.0}, {"SKU": "VA-110-BL2", "product_name": "Valence (v2) Vegan Black size 11", "on_hand_end": 4, "wos": 6.5, "wos_status": "LOW", "order_qty": 6, "avg_cost": 27.0}, {"SKU": "VA-090W-BL2", "product_name": "Valence (v2) Vegan Black size 9W", "on_hand_end": 7, "wos": 6.5, "wos_status": "LOW", "order_qty": 11, "avg_cost": 27.0}, {"SKU": "SP-120-AU2", "product_name": "Spice (v2) Dark Lava size 12", "on_hand_end": 3, "wos": 6.5, "wos_status": "LOW", "order_qty": 6, "avg_cost": 31.0}, {"SKU": "OM-095W-BL2", "product_name": "Omega (v2) Black size 9.5W", "on_hand_end": 8, "wos": 6.5, "wos_status": "LOW", "order_qty": 12, "avg_cost": 29.0}, {"SKU": "OM-060-BL2", "product_name": "Omega (v2) Black size 6", "on_hand_end": 13, "wos": 6.5, "wos_status": "LOW", "order_qty": 19, "avg_cost": 29.0}, {"SKU": "VA-085-CB2", "product_name": "Valence (v2) Chestnut Brown size 8.5", "on_hand_end": 11, "wos": 6.5, "wos_status": "LOW", "order_qty": 17, "avg_cost": 31.5}, {"SKU": "VA-075W-BL2", "product_name": "Valence (v2) Vegan Black size 7.5W", "on_hand_end": 6, "wos": 6.5, "wos_status": "LOW", "order_qty": 9, "avg_cost": 27.0}, {"SKU": "VA-090W-CB2", "product_name": "Valence (v2) Chestnut Brown size 9W", "on_hand_end": 5, "wos": 7.222222222222222, "wos_status": "LOW", "order_qty": 7, "avg_cost": 31.5}, {"SKU": "NV-080-BL5", "product_name": "Nova 2.0 (v2) Black size 8", "on_hand_end": 5, "wos": 7.222222222222222, "wos_status": "LOW", "order_qty": 7, "avg_cost": 68.0}, {"SKU": "OM-110-BL2", "product_name": "Omega (v2) Black size 11", "on_hand_end": 18, "wos": 7.3125, "wos_status": "LOW", "order_qty": 22, "avg_cost": 29.0}, {"SKU": "SP-085-MD2", "product_name": "Spice (v2) Mystic Dune size 8.5", "on_hand_end": 9, "wos": 7.3125, "wos_status": "LOW", "order_qty": 11, "avg_cost": 31.0}, {"SKU": "OM-095-BO2", "product_name": "Omega (v2) Bourbon size 9.5", "on_hand_end": 8, "wos": 7.428571428571429, "wos_status": "LOW", "order_qty": 10, "avg_cost": 29.0}, {"SKU": "HZ-095-BL1", "product_name": "Horizon Black size 9.5", "on_hand_end": 8, "wos": 7.428571428571429, "wos_status": "LOW", "order_qty": 10, "avg_cost": 30.1}, {"SKU": "VA-100-BL2", "product_name": "Valence (v2) Vegan Black size 10", "on_hand_end": 8, "wos": 7.428571428571429, "wos_status": "LOW", "order_qty": 10, "avg_cost": 27.0}, {"SKU": "SP-060-MD2", "product_name": "Spice (v2) Mystic Dune size 6", "on_hand_end": 4, "wos": 7.428571428571429, "wos_status": "LOW", "order_qty": 6, "avg_cost": 62.0}, {"SKU": "GR-070-BL3", "product_name": "Gravity Black size 7", "on_hand_end": 13, "wos": 7.681818181818182, "wos_status": "LOW", "order_qty": 15, "avg_cost": 30.1}, {"SKU": "SP-065-BL2", "product_name": "Spice (v2) Black size 6.5", "on_hand_end": 13, "wos": 7.681818181818182, "wos_status": "LOW", "order_qty": 15, "avg_cost": 31.0}, {"SKU": "NV-070W-BL5", "product_name": "Nova 2.0 (v2) Black size 7W", "on_hand_end": 3, "wos": 7.8, "wos_status": "LOW", "order_qty": 6, "avg_cost": 74.0}, {"SKU": "SP-095W-BL2", "product_name": "Spice (v2) Black size 9.5W", "on_hand_end": 12, "wos": 8.210526315789474, "wos_status": "HEALTHY", "order_qty": 12, "avg_cost": 31.0}, {"SKU": "SP-100-MD2", "product_name": "Spice (v2) Mystic Dune size 10", "on_hand_end": 9, "wos": 8.357142857142858, "wos_status": "HEALTHY", "order_qty": 9, "avg_cost": 31.0}], "po_sku_list": [{"SKU": "OM-075-BL2", "QTY": 20.0, "PRICE": 58}, {"SKU": "OM-070W-BL2", "QTY": 16.0, "PRICE": 58}, {"SKU": "OM-075-BO2", "QTY": 28.0, "PRICE": 58}, {"SKU": "OM-090-BO2", "QTY": 32.0, "PRICE": 58}, {"SKU": "OM-SO-050-BL2", "QTY": 8.0, "PRICE": 50}, {"SKU": "OM-SO-060-BL2", "QTY": 10.0, "PRICE": 50}, {"SKU": "OM-SO-065-BL2", "QTY": 10.0, "PRICE": 50}, {"SKU": "OM-SO-070-BL2", "QTY": 20.0, "PRICE": 50}, {"SKU": "OM-SO-075-BL2", "QTY": 20.0, "PRICE": 50}, {"SKU": "OM-SO-080-BL2", "QTY": 22.0, "PRICE": 50}, {"SKU": "OM-SO-085-BL2", "QTY": 22.0, "PRICE": 50}, {"SKU": "OM-SO-090-BL2", "QTY": 14.0, "PRICE": 50}, {"SKU": "OM-SO-095-BL2", "QTY": 10.0, "PRICE": 50}, {"SKU": "OM-SO-100-BL2", "QTY": 12.0, "PRICE": 50}, {"SKU": "OM-SO-110-BL2", "QTY": 8.0, "PRICE": 50}, {"SKU": "OM-SO-120-BL2", "QTY": 6.0, "PRICE": 50}, {"SKU": "SP-SO-050-BL2", "QTY": 8.0, "PRICE": 52}, {"SKU": "SP-SO-060-BL2", "QTY": 10.0, "PRICE": 52}, {"SKU": "SP-SO-065-BL2", "QTY": 10.0, "PRICE": 52}, {"SKU": "SP-SO-070-BL2", "QTY": 20.0, "PRICE": 52}, {"SKU": "SP-SO-075-BL2", "QTY": 20.0, "PRICE": 52}, {"SKU": "SP-SO-080-BL2", "QTY": 22.0, "PRICE": 52}, {"SKU": "SP-SO-085-BL2", "QTY": 22.0, "PRICE": 52}, {"SKU": "SP-SO-090-BL2", "QTY": 14.0, "PRICE": 52}, {"SKU": "SP-SO-095-BL2", "QTY": 10.0, "PRICE": 52}, {"SKU": "SP-SO-100-BL2", "QTY": 12.0, "PRICE": 52}, {"SKU": "SP-SO-110-BL2", "QTY": 8.0, "PRICE": 52}, {"SKU": "SP-SO-120-BL2", "QTY": 6.0, "PRICE": 52}, {"SKU": "SP-085W-BL2", "QTY": 16.0, "PRICE": 62}, {"SKU": "SP-075-MD2", "QTY": 12.0, "PRICE": 62}, {"SKU": "SP-110-MD2", "QTY": 12.0, "PRICE": 62}, {"SKU": "SP-075-AU2", "QTY": 16.0, "PRICE": 62}, {"SKU": "SP-080-AU2", "QTY": 28.0, "PRICE": 62}, {"SKU": "SP-090W-AU2", "QTY": 16.0, "PRICE": 62}, {"SKU": "GR-065-BL3", "QTY": 12.0, "PRICE": 58}, {"SKU": "GR-075-BL3", "QTY": 20.0, "PRICE": 58}, {"SKU": "GR-080-BL3", "QTY": 20.0, "PRICE": 58}, {"SKU": "GR-085-BL3", "QTY": 40.0, "PRICE": 58}, {"SKU": "GR-090-BL3", "QTY": 20.0, "PRICE": 58}, {"SKU": "GR-100-BL3", "QTY": 20.0, "PRICE": 58}, {"SKU": "GR-110-BL3", "QTY": 12.0, "PRICE": 58}, {"SKU": "GR-130-BL3", "QTY": 4.0, "PRICE": 58}, {"SKU": "GR-075W-BL3", "QTY": 16.0, "PRICE": 58}, {"SKU": "GR-085W-BL3", "QTY": 16.0, "PRICE": 58}, {"SKU": "GR-090W-BL3", "QTY": 24.0, "PRICE": 58}, {"SKU": "GR-100W-BL3", "QTY": 20.0, "PRICE": 58}, {"SKU": "RO-070-WH1", "QTY": 12.0, "PRICE": 56}, {"SKU": "RO-095-WH1", "QTY": 20.0, "PRICE": 56}, {"SKU": "RO-110-WH1", "QTY": 16.0, "PRICE": 56}, {"SKU": "HZ-070-BL1", "QTY": 12.0, "PRICE": 58}, {"SKU": "HZ-070-TN1", "QTY": 28.0, "PRICE": 58}, {"SKU": "HZ-085-TN1", "QTY": 12.0, "PRICE": 58}, {"SKU": "HZ-095-TN1", "QTY": 12.0, "PRICE": 58}, {"SKU": "VA-070-BL2", "QTY": 32.0, "PRICE": 54}, {"SKU": "VA-060-CB2", "QTY": 12.0, "PRICE": 63}, {"SKU": "VA-070-CB2", "QTY": 32.0, "PRICE": 63}, {"SKU": "VA-075-CB2", "QTY": 32.0, "PRICE": 63}], "top_sellers": [{"parent_sku": "ASL-BL1", "product_name": "Astra Comp Toe Black", "total_sold": 83, "total_oh": 4714, "parent_wos": 104.8, "wos_status": "OVERSTOCKED"}, {"parent_sku": "OM-BL2", "product_name": "Omega (v2) Black", "total_sold": 50, "total_oh": 595, "parent_wos": 13.0, "wos_status": "HEALTHY"}, {"parent_sku": "GR-BL3", "product_name": "Gravity Black", "total_sold": 40, "total_oh": 194, "parent_wos": 6.5, "wos_status": "LOW"}, {"parent_sku": "ASL-SO-BL1", "product_name": "Astra Soft Toe Black", "total_sold": 20, "total_oh": 241, "parent_wos": 18.8, "wos_status": "WATCH"}, {"parent_sku": "RO-WH1", "product_name": "Rogue White", "total_sold": 20, "total_oh": 160, "parent_wos": 11.5, "wos_status": "HEALTHY"}, {"parent_sku": "LN-BB1", "product_name": "Luna Comp Toe Brown / Black", "total_sold": 18, "total_oh": 671, "parent_wos": 58.9, "wos_status": "OVERSTOCKED"}, {"parent_sku": "LN-BL1", "product_name": "Luna Comp Toe Black", "total_sold": 17, "total_oh": 1223, "parent_wos": 89.8, "wos_status": "OVERSTOCKED"}, {"parent_sku": "VA-BL2", "product_name": "Valence (v2) Vegan Black", "total_sold": 15, "total_oh": 146, "parent_wos": 7.9, "wos_status": "LOW"}, {"parent_sku": "OM-BO2", "product_name": "Omega (v2) Bourbon", "total_sold": 14, "total_oh": 131, "parent_wos": 6.3, "wos_status": "LOW"}, {"parent_sku": "VA-CB2", "product_name": "Valence (v2) Chestnut Brown", "total_sold": 14, "total_oh": 119, "parent_wos": 7.1, "wos_status": "LOW"}], "disc_parents": [{"parent_sku": "FN-BL2", "product_name": "Fusion (v2) Black", "supplier": "Mexico", "total_oh": 272, "total_val": 18224.0, "parent_wos": 35.5, "wos_status": "OVERSTOCKED", "n_slow": 16, "n_active": 19, "slow_pct": 84.2, "max_streak": 6, "total_sold": 10, "total_vel": 7.65, "disc_candidate": true}, {"parent_sku": "RO-SO-BL1", "product_name": "Rogue (Soft) Black", "supplier": "Mexico", "total_oh": 29, "total_val": 1508.0, "parent_wos": 21.2, "wos_status": "OVERSTOCKED", "n_slow": 6, "n_active": 10, "slow_pct": 60.0, "max_streak": 6, "total_sold": 3, "total_vel": 1.37, "disc_candidate": true}, {"parent_sku": "RO-SO-WH1", "product_name": "Rogue (Soft) White", "supplier": "Mexico", "total_oh": 67, "total_val": 3484.0, "parent_wos": 74.1, "wos_status": "OVERSTOCKED", "n_slow": 8, "n_active": 12, "slow_pct": 66.7, "max_streak": 6, "total_sold": 2, "total_vel": 0.9, "disc_candidate": true}]};
+
+function statusClass(s) {
+  const m = {'CRITICAL':'s-critical','LOW':'s-low','HEALTHY':'s-healthy','WATCH':'s-watch','OVERSTOCKED':'s-overstock','ZERO STOCK':'s-zero','NO VELOCITY':'s-novelocity'};
+  return m[s] || 's-zero';
+}
+function statusHtml(s) { return `<span class="status ${statusClass(s)}">${s}</span>`; }
+function wosDisplay(w) { if (w===null||w===undefined) return '—'; if (w===999) return '∞'; return w.toFixed(1); }
+function streakHtml(n) {
+  let d=''; for (let i=0;i<6;i++){let c=i<n?(n>=4?'escalate':'active'):''; d+=`<div class="streak-dot ${c}"></div>`;}
+  return `<div class="streak-bar">${d}</div>`;
+}
+function flagHtml(r) {
+  if (r.disc_candidate) return '<span class="disc-flag">ESCALATE</span>';
+  const s=r.max_streak;
+  if (s>=4) return '<span class="badge badge-red" style="font-size:9px">4+MO</span>';
+  if (s===3) return '<span class="badge badge-orange" style="font-size:9px">CAUTION</span>';
+  if (s===2) return '<span class="badge badge-yellow" style="font-size:9px">WATCH-EL</span>';
+  if (s===1) return '<span class="badge badge-gray" style="font-size:9px">WATCH</span>';
+  return '';
+}
+function fmt$(v) { return v>0?'$'+v.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0}):'—'; }
+
+function toggleSection(id) { document.getElementById(id).classList.toggle('open'); }
+function expandAll() { document.querySelectorAll('.section').forEach(s=>s.classList.add('open')); }
+function collapseAll() { document.querySelectorAll('.section').forEach(s=>s.classList.remove('open')); }
+function expandUrgent() { collapseAll(); ['sec-1','sec-5','sec-6','sec-10'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.add('open');}); }
+
+let sortState = {};
+function sortTable(tableId, colIdx) {
+  const tbl=document.getElementById(tableId);
+  const tbody=tbl.querySelector('tbody');
+  const rows=Array.from(tbody.querySelectorAll('tr:not(.child-row)'));
+  const key=tableId+'_'+colIdx;
+  const asc=sortState[key]!=='asc';
+  sortState[key]=asc?'asc':'desc';
+  tbl.querySelectorAll('th').forEach((th,i)=>{th.classList.remove('sort-asc','sort-desc');if(i===colIdx)th.classList.add(asc?'sort-asc':'sort-desc');});
+  rows.sort((a,b)=>{
+    const av=a.cells[colIdx]?.textContent.trim()||'';
+    const bv=b.cells[colIdx]?.textContent.trim()||'';
+    const an=parseFloat(av.replace(/[$,%∞]/g,''));
+    const bn=parseFloat(bv.replace(/[$,%∞]/g,''));
+    let cmp=!isNaN(an)&&!isNaN(bn)?an-bn:av.localeCompare(bv);
+    return asc?cmp:-cmp;
+  });
+  rows.forEach(row=>{
+    // Remove child rows first
+    let next=row.nextElementSibling;
+    const kids=[];
+    while(next&&next.classList.contains('child-row')){kids.push(next);next=next.nextElementSibling;}
+    tbody.appendChild(row);
+    kids.forEach(k=>tbody.appendChild(k));
+  });
+}
+
+function toggleRowExpand(parentRow, parentSku, renderFn) {
+  const isExp=parentRow.dataset.expanded==='true';
+  if (isExp) {
+    let next=parentRow.nextElementSibling;
+    while(next&&next.classList.contains('child-row')){const r=next;next=next.nextElementSibling;r.remove();}
+    parentRow.dataset.expanded='false'; parentRow.classList.remove('expanded');
+  } else {
+    const children=DASH.children[parentSku]||[];
+    const frag=document.createDocumentFragment();
+    children.forEach(c=>{const tr=document.createElement('tr');tr.className='child-row';tr.innerHTML=renderFn(c);frag.appendChild(tr);});
+    parentRow.parentNode.insertBefore(frag,parentRow.nextSibling);
+    parentRow.dataset.expanded='true'; parentRow.classList.add('expanded');
+  }
+}
+
+function renderSellers() {
+  const body=document.getElementById('sellers-body'); body.innerHTML='';
+  DASH.top_sellers.forEach(p=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span class="sup-tag ${p.supplier==='China'?'sup-china':'sup-mexico'}">${p.supplier}</span> ${p.parent_sku}</td><td class="product-name">${p.product_name}</td><td style="color:var(--green);font-weight:600">${p.total_sold}</td><td>${p.total_oh.toLocaleString()}</td><td>${wosDisplay(p.parent_wos)}</td><td>${statusHtml(p.wos_status)}</td>`;
+    body.appendChild(tr);
+  });
+}
+
+function renderStreaks() {
+  const body=document.getElementById('streaks-body'); body.innerHTML='';
+  const sorted=[...DASH.parents].filter(p=>p.n_slow>0).sort((a,b)=>b.n_slow-a.n_slow).slice(0,10);
+  sorted.forEach(p=>{
+    const tr=document.createElement('tr'); tr.className='expand-row'; tr.dataset.expanded='false';
+    tr.innerHTML=`<td>${p.parent_sku}${p.disc_candidate?'<span class="disc-flag">DISC</span>':''}</td><td class="product-name">${p.product_name}</td><td>${p.n_slow}/${p.n_active}</td><td>${p.slow_pct.toFixed(0)}%</td><td>${p.max_streak} mo</td><td>${streakHtml(p.max_streak)}</td><td>${flagHtml(p)}</td>`;
+    tr.onclick=()=>toggleRowExpand(tr,p.parent_sku,c=>`<td>${c.sku}</td><td class="product-name">Size ${c.size}</td><td>${c.on_hand}</td><td>${c.wos!==null?c.wos.toFixed(1):'—'}</td><td>${c.streak} mo ${streakHtml(c.streak)}</td><td>${c.sales_90d!==null?c.sales_90d:'—'}</td><td>${statusHtml(c.wos_status)}</td>`);
+    body.appendChild(tr);
+  });
+}
+
+function renderDiscCandidates() {
+  const container=document.getElementById('disc-candidates-container');
+  let html='';
+  DASH.disc_parents.forEach(p=>{
+    const children=DASH.children[p.parent_sku]||[];
+    const valAtRisk=children.filter(c=>c.is_slow).reduce((s,c)=>s+(c.on_hand*(c.avg_cost||0)),0);
+    const totalOh=children.reduce((s,c)=>s+c.on_hand,0);
+    const id='disc'+p.parent_sku.replace(/-/g,'');
+    html+=`<div style="background:rgba(255,77,77,0.04);border:1px solid rgba(255,77,77,0.2);border-radius:6px;padding:14px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;cursor:pointer" onclick="toggleEl('${id}')">
+        <span style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--red)">🔴 ${p.parent_sku}</span>
+        <span style="font-family:var(--font-body);font-size:12px;color:var(--text2)">${p.product_name}</span>
+        <span class="badge badge-red">${p.n_slow}/${p.n_active} SIZES SLOW</span>
+        <span class="badge badge-gray">${totalOh} UNITS</span>
+        <span class="badge badge-orange">${fmt$(valAtRisk)} AT RISK</span>
+        <span class="badge badge-red">6-MO STREAK</span>
+        <span style="margin-left:auto;color:var(--text3);font-size:11px">▼ sizes</span>
+      </div>
+      <div id="${id}" style="display:none">
+        <div class="table-wrap"><table><thead><tr><th>SKU</th><th>Size</th><th>On Hand</th><th>WOS</th><th>Sales 90D</th><th>Streak</th><th>Status</th></tr></thead><tbody>
+          ${children.map(c=>`<tr style="${c.is_slow?'background:rgba(255,140,66,0.04)':''}"><td>${c.sku}</td><td>${c.size}</td><td>${c.on_hand}</td><td>${c.wos!==null?c.wos.toFixed(1):'—'}</td><td>${c.sales_90d!==null?c.sales_90d:'—'}</td><td>${c.streak} mo</td><td>${statusHtml(c.wos_status)}${c.is_slow?'<span class="slow-flag">●</span>':''}</td></tr>`).join('')}
+        </tbody></table></div>
+      </div>
+    </div>`;
+  });
+  container.innerHTML=html;
+}
+function toggleEl(id){const e=document.getElementById(id);e.style.display=e.style.display==='none'?'block':'none';}
+
+let slowFilter='all';
+function setSlowFilter(f,btn){slowFilter=f;document.querySelectorAll('#sec-4 .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSlowTable();}
+function filterSlowTable(){renderSlowTable();}
+function renderSlowTable(){
+  const body=document.getElementById('slow-body');body.innerHTML='';
+  const search=document.getElementById('slow-search').value.toLowerCase();
+  DASH.parents.filter(p=>p.n_slow>0).filter(p=>{
+    if(slowFilter==='escalate')return p.disc_candidate;
+    if(slowFilter==='caution')return p.max_streak===3;
+    if(slowFilter==='watch')return p.max_streak>=1&&p.max_streak<3;
+    return true;
+  }).filter(p=>!search||p.parent_sku.toLowerCase().includes(search)||p.product_name.toLowerCase().includes(search))
+  .sort((a,b)=>b.total_val-a.total_val).forEach(p=>{
+    const children=DASH.children[p.parent_sku]||[];
+    const slow=children.filter(c=>c.is_slow);
+    const valAtRisk=slow.reduce((s,c)=>s+(c.on_hand*(c.avg_cost||0)),0);
+    const unitsStuck=slow.reduce((s,c)=>s+c.on_hand,0);
+    const tr=document.createElement('tr');tr.className='expand-row';tr.dataset.expanded='false';
+    tr.innerHTML=`<td>${p.parent_sku}${p.disc_candidate?'<span class="disc-flag">DISC</span>':''}</td><td class="product-name">${p.product_name}</td><td>${p.n_slow}/${p.n_active}</td><td>${p.slow_pct.toFixed(0)}%</td><td>${unitsStuck}</td><td style="color:var(--orange)">${fmt$(valAtRisk)}</td><td>${p.max_streak} mo ${streakHtml(p.max_streak)}</td><td>${flagHtml(p)}</td>`;
+    tr.onclick=()=>toggleRowExpand(tr,p.parent_sku,c=>`<td>${c.sku}</td><td class="product-name">Size ${c.size}</td><td>${c.on_hand}</td><td>${c.wos!==null?c.wos.toFixed(1):'—'}</td><td>${c.sales_90d!==null?c.sales_90d:'—'}</td><td>${c.streak} mo</td><td>${statusHtml(c.wos_status)}${c.is_slow?'<span class="slow-flag">●</span>':''}</td>`);
+    body.appendChild(tr);
+  });
+}
+
+function renderChina(){
+  const body=document.getElementById('china-body');body.innerHTML='';
+  DASH.china_reorder.forEach(r=>{
+    const ev=(r.order_qty||0)*(r.avg_cost||0);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${r.SKU}</td><td class="product-name">${r.product_name}</td><td>${r.on_hand_end}</td><td style="color:${r.wos<4?'var(--red)':r.wos<8?'var(--orange)':'inherit'}">${r.wos!==null?r.wos.toFixed(1):'—'}</td><td>${r.reorder_point!==null&&r.reorder_point!==undefined?parseFloat(r.reorder_point).toFixed(1):'—'}</td><td style="color:var(--accent);font-weight:600">${r.order_qty}</td><td>${r.avg_cost!==null?'$'+parseFloat(r.avg_cost).toFixed(2):'—'}</td><td>${fmt$(ev)}</td><td>${statusHtml(r.wos_status)}</td>`;
+    body.appendChild(tr);
+  });
+}
+
+let mexFilter='all';
+function setMexFilter(f,btn){mexFilter=f;document.querySelectorAll('#sec-6 .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMexTable();}
+function filterMexTable(){renderMexTable();}
+function renderMexTable(){
+  const body=document.getElementById('mex-body');body.innerHTML='';
+  const search=document.getElementById('mex-search').value.toLowerCase();
+  DASH.mex_uncovered.filter(r=>{
+    if(mexFilter==='critical')return r.wos_status==='CRITICAL';
+    if(mexFilter==='low')return r.wos_status==='LOW';
+    return true;
+  }).filter(r=>!search||r.SKU.toLowerCase().includes(search)||r.product_name.toLowerCase().includes(search))
+  .forEach(r=>{
+    const ev=(r.order_qty||0)*(r.avg_cost||0);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${r.SKU}</td><td class="product-name">${r.product_name}</td><td>${r.on_hand_end}</td><td style="color:${r.wos<4?'var(--red)':r.wos<8?'var(--orange)':'inherit'}">${r.wos!==null?r.wos.toFixed(1):'—'}</td><td style="color:var(--accent);font-weight:600">${r.order_qty}</td><td>${r.avg_cost!==null?'$'+parseFloat(r.avg_cost).toFixed(2):'—'}</td><td>${fmt$(ev)}</td><td>${statusHtml(r.wos_status)}</td>`;
+    body.appendChild(tr);
+  });
+}
+
+let wosFilter='all';
+function setWosFilter(f,btn){wosFilter=f;document.querySelectorAll('#sec-7 .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderWosTable();}
+function filterWosTable(){renderWosTable();}
+function renderWosTable(){
+  const body=document.getElementById('wos-body');body.innerHTML='';
+  const search=document.getElementById('wos-search').value.toLowerCase();
+  DASH.parents.filter(p=>{
+    if(wosFilter==='critical')return p.wos_status==='CRITICAL';
+    if(wosFilter==='low')return p.wos_status==='LOW';
+    if(wosFilter==='healthy')return p.wos_status==='HEALTHY';
+    if(wosFilter==='watch')return p.wos_status==='WATCH';
+    if(wosFilter==='overstocked')return p.wos_status==='OVERSTOCKED';
+    return true;
+  }).filter(p=>!search||p.parent_sku.toLowerCase().includes(search)||p.product_name.toLowerCase().includes(search))
+  .sort((a,b)=>a.parent_wos-b.parent_wos).forEach(p=>{
+    const children=DASH.children[p.parent_sku]||[];
+    const laOh=children.reduce((s,c)=>s+(c.la||0),0);
+    const milOh=children.reduce((s,c)=>s+(c.mil||0),0);
+    const tr=document.createElement('tr');tr.className='expand-row';tr.dataset.expanded='false';
+    tr.innerHTML=`<td>${p.parent_sku}${p.disc_candidate?'<span class="disc-flag">DISC</span>':''}</td><td class="product-name">${p.product_name}</td><td><span class="sup-tag ${p.supplier==='China'?'sup-china':'sup-mexico'}">${p.supplier}</span></td><td>${p.total_oh.toLocaleString()}</td><td>${p.total_vel!==null?p.total_vel.toFixed(2):'—'}</td><td style="color:${p.parent_wos<4?'var(--red)':p.parent_wos<8?'var(--orange)':p.parent_wos>(p.supplier==='China'?30:20)?'var(--purple)':'inherit'}">${wosDisplay(p.parent_wos)}</td><td style="font-size:10px;color:var(--text3)">${laOh}/${milOh}</td><td>${p.max_streak} mo</td><td>${statusHtml(p.wos_status)}</td>`;
+    tr.onclick=()=>toggleRowExpand(tr,p.parent_sku,c=>`<td>${c.sku}</td><td class="product-name">Size ${c.size}</td><td><span style="font-size:10px;color:var(--text3)">LA:${c.la} MIL:${c.mil}</span></td><td>${c.on_hand}</td><td>${c.wos!==null?c.wos.toFixed(1):'—'}</td><td>${c.sales_90d!==null?c.sales_90d:'—'} (90D)</td><td>${c.streak} mo</td><td>${statusHtml(c.wos_status)}${c.is_slow?'<span class="slow-flag">●</span>':''}${c.po_qty>0?'<span class="po-pill">PO:'+c.po_qty+'</span>':''}</td><td></td>`);
+    body.appendChild(tr);
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  renderSellers(); renderStreaks(); renderDiscCandidates();
+  renderSlowTable(); renderChina(); renderMexTable(); renderWosTable();
+});
+</script>
+</body>
+</html>
