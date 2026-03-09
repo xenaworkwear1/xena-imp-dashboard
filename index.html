@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMP Dashboard — Xena Workwear | Week of Mar 8, 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0d0f12;
+    --bg2: #131619;
+    --bg3: #191d22;
+    --border: #252a31;
+    --border2: #2e343d;
+    --text: #d4dbe6;
+    --text-dim: #7a8799;
+    --text-bright: #eef2f8;
+    --accent: #3b8beb;
+    --accent2: #1e6fcf;
+    --red: #e05252;
+    --orange: #e07a29;
+    --yellow: #c9a227;
+    --green: #2ea87e;
+    --purple: #8b5cf6;
+    --teal: #14b8a6;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar-logo {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .topbar-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .topbar-controls {
+    display: flex;
+    gap: 8px;
+  }
+  .btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:hover { background: var(--border2); color: var(--text-bright); }
+  .btn.urgent { border-color: var(--red); color: var(--red); }
+  .btn.urgent:hover { background: rgba(224,82,82,0.1); }
+
+  /* LAYOUT */
+  .container { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
+
+  /* SECTIONS */
+  .section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .section-header:hover { background: rgba(255,255,255,0.02); }
+  .section-header.collapsed { border-bottom: none; }
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-bright);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .section-num {
+    color: var(--text-dim);
+    font-size: 10px;
+  }
+  .section-toggle {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    transition: transform 0.2s;
+  }
+  .section-header.collapsed .section-toggle { transform: rotate(-90deg); }
+  .section-body {
+    padding: 16px 20px;
+  }
+  .section-body.hidden { display: none; }
+
+  /* BADGES */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .badge-critical { background: rgba(224,82,82,0.15); color: var(--red); border: 1px solid rgba(224,82,82,0.3); }
+  .badge-low { background: rgba(224,122,41,0.15); color: var(--orange); border: 1px solid rgba(224,122,41,0.3); }
+  .badge-healthy { background: rgba(46,168,126,0.15); color: var(--green); border: 1px solid rgba(46,168,126,0.3); }
+  .badge-watch { background: rgba(201,162,39,0.15); color: var(--yellow); border: 1px solid rgba(201,162,39,0.3); }
+  .badge-overstocked { background: rgba(139,92,246,0.15); color: var(--purple); border: 1px solid rgba(139,92,246,0.3); }
+  .badge-zero { background: rgba(122,135,153,0.15); color: var(--text-dim); border: 1px solid rgba(122,135,153,0.2); }
+  .badge-disc { background: rgba(224,82,82,0.2); color: var(--red); border: 1px solid rgba(224,82,82,0.4); }
+  .badge-caution { background: rgba(224,122,41,0.2); color: var(--orange); border: 1px solid rgba(224,122,41,0.4); }
+  .badge-watchelev { background: rgba(201,162,39,0.15); color: var(--yellow); border: 1px solid rgba(201,162,39,0.3); }
+  .badge-pipeline { background: rgba(59,139,235,0.15); color: var(--accent); border: 1px solid rgba(59,139,235,0.3); }
+
+  /* KPI GRID */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .kpi-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+  .kpi-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .kpi-value {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-bright);
+    line-height: 1;
+  }
+  .kpi-value.red { color: var(--red); }
+  .kpi-value.orange { color: var(--orange); }
+  .kpi-value.green { color: var(--green); }
+  .kpi-value.yellow { color: var(--yellow); }
+  .kpi-value.purple { color: var(--purple); }
+  .kpi-sub { font-size: 10px; color: var(--text-dim); margin-top: 3px; }
+
+  /* TABLES */
+  .tbl-wrap {
+    overflow-x: auto;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  thead tr {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border2);
+  }
+  th {
+    padding: 8px 12px;
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+  }
+  th:hover { color: var(--text); }
+  th.sorted-asc::after { content: ' ↑'; color: var(--accent); }
+  th.sorted-desc::after { content: ' ↓'; color: var(--accent); }
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  td.mono { font-family: var(--mono); font-size: 11px; }
+  td.num { font-family: var(--mono); text-align: right; }
+  td.red { color: var(--red); font-weight: 600; }
+  td.orange { color: var(--orange); }
+  td.green { color: var(--green); }
+  td.yellow { color: var(--yellow); }
+  td.dim { color: var(--text-dim); }
+
+  /* EXPANDABLE ROWS */
+  .parent-row {
+    background: var(--bg3);
+    cursor: pointer;
+  }
+  .parent-row:hover td { background: rgba(59,139,235,0.05); }
+  .parent-row td { font-weight: 500; }
+  .expand-arrow { display: inline-block; margin-right: 6px; font-size: 10px; color: var(--text-dim); transition: transform 0.2s; }
+  .parent-row.expanded .expand-arrow { transform: rotate(90deg); }
+  .child-row { display: none; }
+  .child-row.visible { display: table-row; }
+  .child-row td { padding-left: 28px; background: rgba(0,0,0,0.2); font-size: 11px; }
+  .child-row:hover td { background: rgba(59,139,235,0.04); }
+
+  /* FILTER BAR */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-input {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 6px 10px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 11px;
+    outline: none;
+    min-width: 180px;
+  }
+  .filter-input:focus { border-color: var(--accent); }
+  .filter-input::placeholder { color: var(--text-dim); }
+  .filter-btn {
+    padding: 6px 10px;
+    font-size: 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text-dim);
+    cursor: pointer;
+    font-family: var(--mono);
+    transition: all 0.15s;
+  }
+  .filter-btn:hover, .filter-btn.active { 
+    background: var(--border2); 
+    color: var(--text-bright);
+  }
+  .filter-btn.critical.active { border-color: var(--red); color: var(--red); background: rgba(224,82,82,0.1); }
+  .filter-btn.low.active { border-color: var(--orange); color: var(--orange); background: rgba(224,122,41,0.1); }
+
+  /* EXEC SUMMARY */
+  .exec-summary {
+    background: var(--bg3);
+    border-radius: 6px;
+    padding: 16px 20px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+    border-left: 3px solid var(--accent);
+  }
+  .exec-summary strong { color: var(--text-bright); }
+  .exec-summary .alert { color: var(--red); font-weight: 600; }
+  .exec-summary .warn { color: var(--orange); font-weight: 600; }
+
+  /* ALERT BANNERS */
+  .alert-banner {
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .alert-banner.red { background: rgba(224,82,82,0.1); border: 1px solid rgba(224,82,82,0.3); color: #f08080; }
+  .alert-banner.orange { background: rgba(224,122,41,0.1); border: 1px solid rgba(224,122,41,0.3); color: #e09a60; }
+  .alert-banner.blue { background: rgba(59,139,235,0.1); border: 1px solid rgba(59,139,235,0.3); color: #7ab4f5; }
+  .alert-banner.yellow { background: rgba(201,162,39,0.1); border: 1px solid rgba(201,162,39,0.3); color: #d4b84a; }
+  .alert-icon { font-size: 14px; line-height: 1; margin-top: 1px; }
+
+  /* TREND BARS */
+  .trend-bar-wrap { display: flex; align-items: center; gap: 6px; }
+  .trend-bar-bg {
+    flex: 1;
+    height: 4px;
+    background: var(--bg3);
+    border-radius: 2px;
+    overflow: hidden;
+    min-width: 60px;
+  }
+  .trend-bar-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+  .trend-bar-fill.red { background: var(--red); }
+  .trend-bar-fill.orange { background: var(--orange); }
+  .trend-bar-fill.green { background: var(--green); }
+  .trend-bar-fill.yellow { background: var(--yellow); }
+  .trend-bar-fill.purple { background: var(--purple); }
+
+  /* SUMMARY ROWS */
+  .summary-row td { background: var(--bg3); font-weight: 600; border-top: 1px solid var(--border2); }
+
+  /* PO BOX */
+  .po-box {
+    background: var(--bg3);
+    border: 1px solid rgba(59,139,235,0.3);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+  }
+  .po-box-title { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+  .po-stats { display: flex; gap: 24px; flex-wrap: wrap; }
+  .po-stat { }
+  .po-stat-label { font-size: 10px; color: var(--text-dim); font-family: var(--mono); }
+  .po-stat-value { font-size: 14px; font-family: var(--mono); font-weight: 600; color: var(--text-bright); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3a4150; }
+
+  /* MISC */
+  .pill-group { display: flex; gap: 4px; flex-wrap: wrap; }
+  .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 4px; }
+  .dot.red { background: var(--red); }
+  .dot.orange { background: var(--orange); }
+  .dot.green { background: var(--green); }
+  .dot.yellow { background: var(--yellow); }
+  .dot.purple { background: var(--purple); }
+  .dot.blue { background: var(--accent); }
+
+  .section-subtitle { font-size: 11px; color: var(--text-dim); margin-bottom: 12px; }
+
+  .wos-bar-cell { min-width: 100px; }
+  
+  .no-data { text-align: center; padding: 24px; color: var(--text-dim); font-family: var(--mono); font-size: 12px; }
+
+  .footnote { font-size: 10px; color: var(--text-dim); margin-top: 10px; font-family: var(--mono); }
+  
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
+
+  .mini-table { font-size: 11px; width: 100%; }
+  .mini-table td { padding: 4px 8px; border-bottom: 1px solid var(--border); }
+  .mini-table th { padding: 6px 8px; }
+
+  .streak-indicator {
+    display: inline-flex;
+    gap: 2px;
+    align-items: center;
+  }
+  .streak-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+  }
+  .streak-dot.slow { background: var(--red); }
+  .streak-dot.ok { background: var(--green); }
+  .streak-dot.zero { background: var(--border2); }
+
+  .tag-new { background: rgba(59,139,235,0.2); color: var(--accent); font-size: 9px; font-family: var(--mono); padding: 1px 5px; border-radius: 2px; margin-left: 4px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">⚡ IMP // XENA WORKWEAR</div>
+  <div class="topbar-meta">SNAPSHOT: MAR 8, 2026 &nbsp;|&nbsp; PO-0068 IN TRANSIT &nbsp;|&nbsp; v3.2</div>
+  <div class="topbar-controls">
+    <button class="btn" onclick="expandAll()">Expand All</button>
+    <button class="btn" onclick="collapseAll()">Collapse All</button>
+    <button class="btn urgent" onclick="urgentOnly()">Urgent Only</button>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ===================== SECTION 1: EXECUTIVE SUMMARY ===================== -->
+<div class="section" id="sec1">
+  <div class="section-header" onclick="toggleSection('sec1')">
+    <div class="section-title">
+      <span class="section-num">01</span>
+      Executive Summary
+    </div>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body" id="sec1-body">
+    <div class="exec-summary">
+      Inventory is under significant pressure across multiple lines this week: <strong class="alert">24 child SKUs are in CRITICAL WOS (under 4 weeks)</strong>, concentrated in Valence v2 Black/Chestnut Brown, Gravity Black, and Omega Bourbon — none of which are covered by PO-0068. <strong>PO-0068 (964 pairs, $54K) is in transit with an estimated April 14 arrival</strong>, but post-arrival WOS analysis confirms that 4 covered SKUs (GR-075-BL3, GR-080-BL3, RO-070-WH1, OM-075-BL2) will still land below 16 weeks and need a supplemental order. The most urgent action is placing a <strong class="warn">Mexico supplemental PO covering 32 uncovered SKUs (~419 pairs, ~$13K)</strong>, and separately a <strong>China PO for 9 Astra Soft-Toe SKUs (~193 pairs)</strong>. On the slow-mover front, <strong class="alert">9 parent families have reached full Discontinuation Candidate status (4+ months)</strong>, led by Fusion v2 Black (6 months, 89% slow, $17.6K at risk), Rogue Black (6 months, 83% slow, $10.9K), and Luna Brown/Black (5 months, 69% slow, $20K) — these require active liquidation decisions before inventory compounds further. Note: this session uses on-hand snapshot data only — velocity estimates are derived from month-over-month on-hand changes across the 6 monthly snapshots; for full Forecast Data accuracy, upload the weekly Forecast export alongside next week's snapshot.
+    </div>
+
+    <div style="margin-top: 14px;">
+      <div class="alert-banner red">
+        <span class="alert-icon">🔴</span>
+        <div><strong>URGENT — Mexico Supplemental PO Required:</strong> 32 SKUs at CRITICAL/LOW WOS with no open PO. Valence v2 (10 critical SKUs), Omega Bourbon, Gravity Black, Spice MD2. Place before April 1 to arrive before stockouts.</div>
+      </div>
+      <div class="alert-banner orange">
+        <span class="alert-icon">🟠</span>
+        <div><strong>URGENT — China PO Required:</strong> 9 Astra Soft-Toe SKUs below reorder point. ASL-SO-060-BL1 is CRITICAL (1.7 WOS). Lead time 13 weeks — order immediately.</div>
+      </div>
+      <div class="alert-banner yellow">
+        <span class="alert-icon">⚠️</span>
+        <div><strong>Action Required — Discontinuation Decisions:</strong> FN-BL2 (Fusion v2 Black), RO-BL1 (Rogue Black), SP-AU2 (Spice Dark Lava), SP-MD2 (Spice Mystic Dune), LN-BB1 (Luna Brown/Black) have all been flagged for 5-6 consecutive months. Decision needed: liquidate, markdown, or discontinue.</div>
+      </div>
+      <div class="alert-banner blue">
+        <span class="alert-icon">ℹ️</span>
+        <div><strong>Supplier File Flagged:</strong> Inv_021225.xlsx loaded. Date on file needs confirmation — is this December 2025 or February 12, 2025? Availability data used for context only until confirmed.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SECTION 2: KPI SCORECARD ===================== -->
+<div class="section" id="sec2">
+  <div class="section-header" onclick="toggleSection('sec2')">
+    <div class="section-title"><span class="section-num">02</span> Weekly KPI Scorecard</div>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body" id="sec2-body">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total On Hand</div>
+        <div class="kpi-value">10,765</div>
+        <div class="kpi-sub">All footwear (excl. MF/LE/v1)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">LA Warehouse</div>
+        <div class="kpi-value">7,781</div>
+        <div class="kpi-sub">72% of total stock</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Milwaukee</div>
+        <div class="kpi-value">2,984</div>
+        <div class="kpi-sub">28% of total stock</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Inventory Value</div>
+        <div class="kpi-value" style="font-size:17px;">$379,976</div>
+        <div class="kpi-sub">Cost basis, footwear</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">CRITICAL WOS</div>
+        <div class="kpi-value red">24</div>
+        <div class="kpi-sub">Child SKUs &lt; 4 wks</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">LOW WOS</div>
+        <div class="kpi-value orange">28</div>
+        <div class="kpi-sub">Child SKUs 4–8 wks</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Healthy</div>
+        <div class="kpi-value green">47</div>
+        <div class="kpi-sub">Child SKUs 8–16 wks</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Overstocked</div>
+        <div class="kpi-value purple">210</div>
+        <div class="kpi-sub">Child SKUs &gt;20/26 wks</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Slow Movers</div>
+        <div class="kpi-value red">180</div>
+        <div class="kpi-sub">WOS+velocity criteria met</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Disc. Candidates</div>
+        <div class="kpi-value red">9</div>
+        <div class="kpi-sub">Parent SKUs ≥ 4 months</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Caution (3 mo)</div>
+        <div class="kpi-value orange">26</div>
+        <div class="kpi-sub">Child SKUs building case</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">In Pipeline</div>
+        <div class="kpi-value" style="color:var(--accent);">PO-0068</div>
+        <div class="kpi-sub">964 pairs, arrives ~Apr 14</div>
+      </div>
+    </div>
+
+    <!-- Inventory by Parent SKU -->
+    <div style="margin-top: 8px; font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-bottom: 10px;">INVENTORY VALUE BY PARENT FAMILY — TOP 15</div>
+    <div class="tbl-wrap">
+      <table id="kpi-value-tbl">
+        <thead><tr>
+          <th onclick="sortTable('kpi-value-tbl',0)">Parent SKU</th>
+          <th onclick="sortTable('kpi-value-tbl',1)">Product Family</th>
+          <th onclick="sortTable('kpi-value-tbl',2)">On Hand</th>
+          <th onclick="sortTable('kpi-value-tbl',3)">Value ($)</th>
+          <th onclick="sortTable('kpi-value-tbl',4)">WOS</th>
+          <th onclick="sortTable('kpi-value-tbl',5)">Status</th>
+        </tr></thead>
+        <tbody id="kpi-value-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SECTION 3: LONGITUDINAL TREND ===================== -->
+<div class="section" id="sec3">
+  <div class="section-header" onclick="toggleSection('sec3')">
+    <div class="section-title"><span class="section-num">03</span> Longitudinal Trend Summary</div>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body" id="sec3-body">
+    <p class="section-subtitle">Based on 6 monthly snapshots (Sep 2025 – Feb 2026) + current Mar 8, 2026 snapshot. Velocity estimated from month-over-month on-hand decreases.</p>
+
+    <div class="alert-banner red" style="margin-bottom: 16px;">
+      <span class="alert-icon">📈</span>
+      <div><strong>No new escalations this week</strong> — all 9 Discontinuation Candidates were flagged in prior periods. However, 26 child SKUs are at 3 consecutive months (Caution) and approaching escalation threshold.</div>
+    </div>
+
+    <div style="font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-bottom: 10px; margin-top: 4px;">TOP 5 PARENT SKUs — LONGEST SLOW-MOVER STREAKS</div>
+    <div class="tbl-wrap" style="margin-bottom: 16px;">
+      <table>
+        <thead><tr>
+          <th>Parent SKU</th>
+          <th>Product Family</th>
+          <th>Max Streak</th>
+          <th>Slow Sizes</th>
+          <th>Active Sizes</th>
+          <th>Slow %</th>
+          <th>Value at Risk</th>
+          <th>Flag Level</th>
+        </tr></thead>
+        <tbody id="top5-streak-tbody"></tbody>
+      </table>
+    </div>
+
+    <div style="font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-bottom: 10px;">MONTHLY ON-HAND TREND — KEY FAMILIES (units, all sizes combined)</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Parent SKU</th>
+          <th>Product</th>
+          <th>Sep '25</th>
+          <th>Oct '25</th>
+          <th>Nov '25</th>
+          <th>Dec '25</th>
+          <th>Jan '26</th>
+          <th>Feb '26</th>
+          <th>Mar 8 '26</th>
+          <th>Trend</th>
+          <th>Disc Flag</th>
+        </tr></thead>
+        <tbody id="trend-tbody"></tbody>
+      </table>
+    </div>
+    <p class="footnote">* Zero-stock months excluded from streak count per IMP rules. Streak pauses but does not reset.</p>
+  </div>
+</div>
+
+<!-- ===================== SECTION 4: SLOW MOVER & OVERSTOCK ===================== -->
+<div class="section" id="sec4">
+  <div class="section-header" onclick="toggleSection('sec4')">
+    <div class="section-title"><span class="section-num">04</span> Slow-Mover &amp; Overstock Report</div>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body" id="sec4-body">
+    <p class="section-subtitle">Sorted by inventory value at risk descending. Only parents with ≥1 slow-mover child SKU shown. Click parent row to expand sizes.</p>
+    <div class="filter-bar">
+      <input class="filter-input" id="slow-search" placeholder="Search SKU or product..." oninput="filterSlowTable()">
+      <button class="filter-btn" id="fb-all" onclick="setSlowFilter('all')" style="color: var(--text-bright);">All</button>
+      <button class="filter-btn critical" id="fb-disc" onclick="setSlowFilter('disc')">Disc. Candidate</button>
+      <button class="filter-btn low" id="fb-caution" onclick="setSlowFilter('caution')">Caution</button>
+    </div>
+    <div class="tbl-wrap">
+      <table id="slow-tbl">
+        <thead><tr>
+          <th onclick="sortTable('slow-tbl',0)">Parent SKU</th>
+          <th onclick="sortTable('slow-tbl',1)">Product Family</th>
+          <th onclick="sortTable('slow-tbl',2)">Slow Sizes</th>
+          <th onclick="sortTable('slow-tbl',3)">Active Sizes</th>
+          <th onclick="sortTable('slow-tbl',4)">Slow %</th>
+          <th onclick="sortTable('slow-tbl',5)">Units Stuck</th>
+          <th onclick="sortTable('slow-tbl',6)">Value at Risk</th>
+          <th onclick="sortTable('slow-tbl',7)">Streak (mo)</th>
+          <th onclick="sortTable('slow-tbl',8)">Flag Level</th>
+        </tr></thead>
+        <tbody id="slow-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SECTION 5: REORDER — CHINA ===================== -->
+<div class="section" id="sec5">
+  <div class="section-header" onclick="toggleSection('sec5')">
+    <div class="section-title"><span class="section-num">05</span> Reorder Alert — China Batch (ASL, ASM, LN)</div>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body" id="sec5-body">
+    <p class="section-subtitle">Lead time: 13 weeks from order. Target post-reorder WOS: 26 weeks. Safety stock: 2 weeks. Reorder Point = velocity × 15.</p>
+    
+    <div class="alert-banner red" style="margin-bottom: 14px;">
+      <span class="alert-icon">🚨</span>
+      <div><strong>ASL-SO-060-BL1 is CRITICAL (WOS 1.7)</strong> — immediate ordering required. China lead time is 13 weeks; order today arrives ~Jun 8.</div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table id="china-tbl">
+        <thead><tr>
+          <th onclick="sortTable('china-tbl',0)">SKU</th>
+          <th onclick="sortTable('china-tbl',1)">Product</th>
+          <th onclick="sortTable('china-tbl',2)">On Hand</th>
+          <th onclick="sortTable('china-tbl',3)">WOS</th>
+          <th onclick="sortTable('china-tbl',4)">Reorder Pt</th>
+          <th onclick="sortTable('china-tbl',5)">Order Qty</th>
+          <th onclick="sortTable('china-tbl',6)">Unit Cost</th>
+          <th onclick="sortTable('china-tbl',7)">Est. Value</th>
+          <th onclick="sortTable('china-tbl',8)">Status</th>
+        </tr></thead>
+        <tbody id="china-tbody"></tbody>
+        <tfoot><tr class="summary-row" id="china-summary"></tr></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SECTION 6: REORDER — MEXICO ===================== -->
+<div class="section" id="sec6">
+  <div class="section-header" onclick="toggleSection('sec6')">
+    <div class="section-title"><span class="section-num">06</span> Reorder Alert — Mexico Batch</div>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body" id="sec6-body">
+    <p class="section-subtitle">Lead time: 6.5 weeks. Target WOS: 16 weeks. Safety stock: 2 weeks. Reorder Point = velocity × 8.5.</p>
+
+    <div class="po-box">
+      <div class="po-box-title">📦 PO-0068 IN TRANSIT</div>
+      <div class="po-stats">
+        <div class="po-stat"><div class="po-stat-label">PO Date</div><div class="po-stat-value">Feb 15, 2026</div></div>
+        <div class="po-stat"><div class="po-stat-label">Est. Arrival</div><div class="po-stat-value">~Apr 14, 2026</div></div>
+        <div class="po-stat"><div class="po-stat-label">Total Pairs</div><div class="po-stat-value">964</div></div>
+        <div class="po-stat"><div class="po-stat-label">PO Value</div><div class="po-stat-value">$54,200</div></div>
+        <div class="po-stat"><div class="po-stat-label">Days Since PO</div><div class="po-stat-value">22 days</div></div>
+        <div class="po-stat"><div class="po-stat-label">SKUs Covered</div><div class="po-stat-value">57 SKUs</div></div>
+      </div>
+    </div>
+
+    <div class="alert-banner orange" style="margin-bottom: 14px;">
+      <span class="alert-icon">⚠️</span>
+      <div><strong>4 PO-0068 SKUs still LOW post-arrival:</strong> GR-075-BL3 (12.2 wks post-PO), GR-080-BL3 (16.0), RO-070-WH1 (15.2), OM-075-BL2 (11.2). These need supplemental ordering.</div>
+    </div>
+
+    <div style="font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-bottom: 10px; margin-top: 16px;">▶ UNCOVERED SKUS — NOT ON PO-0068 (SUPPLEMENTAL PO NEEDED)</div>
+    <div class="tbl-wrap">
+      <table id="mex-tbl">
+        <thead><tr>
+          <th onclick="sortTable('mex-tbl',0)">SKU</th>
+          <th onclick="sortTable('mex-tbl',1)">Product</th>
+          <th onclick="sortTable('mex-tbl',2)">On Hand</th>
+          <th onclick="sortTable('mex-tbl',3)">WOS</th>
+          <th onclick="sortTable('mex-tbl',4)">Order Qty</th>
+          <th onclick="sortTable('mex-tbl',5)">Unit Cost</th>
+          <th onclick="sortTable('mex-tbl',6)">Est. Value</th>
+          <th onclick="sortTable('mex-tbl',7)">In Supplier Inv</th>
+          <th onclick="sortTable('mex-tbl',8)">Status</th>
+        </tr></thead>
+        <tbody id="mex-tbody"></tbody>
+        <tfoot><tr class="summary-row" id="mex-summary"></tr></tfoot>
+      </table>
+    </div>
+
+    <div style="font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-bottom: 10px; margin-top: 20px;">▶ PO-0068 SKUs — POST-ARRIVAL WOS CHECK</div>
+    <div class="tbl-wrap">
+      <table id="po-check-tbl">
+        <thead><tr>
+          <th>SKU</th>
+          <th>Product</th>
+          <th>Current OH</th>
+          <th>PO Qty</th>
+          <th>Current WOS</th>
+          <th>Post-PO WOS</th>
+          <th>Still Needs Action</th>
+        </tr></thead>
+        <tbody id="po-check-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SECTION 7: FULL WOS SUMMARY ===================== -->
+<div class="section" id="sec7">
+  <div class="section-header" onclick="toggleSection('sec7')">
+    <div class="section-title"><span class="section-num">07</span> Full WOS Summary — All Footwear</div>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body" id="sec7-body">
+    <p class="section-subtitle">All parent SKUs with on-hand inventory. Sorted by WOS ascending. Click row to expand size-level detail.</p>
+    <div class="filter-bar">
+      <input class="filter-input" id="wos-search" placeholder="Search SKU or product..." oninput="filterWosTable()">
+      <button class="filter-btn critical" id="wfb-critical" onclick="setWosFilter('CRITICAL')">Critical</button>
+      <button class="filter-btn low" id="wfb-low" onclick="setWosFilter('LOW')">Low</button>
+      <button class="filter-btn" id="wfb-healthy" onclick="setWosFilter('HEALTHY')">Healthy</button>
+      <button class="filter-btn" id="wfb-watch" onclick="setWosFilter('WATCH')">Watch</button>
+      <button class="filter-btn" id="wfb-over" onclick="setWosFilter('OVERSTOCKED')">Overstocked</button>
+      <button class="filter-btn" id="wfb-all" onclick="setWosFilter('all')" style="color:var(--text-bright);">All</button>
+    </div>
+    <div class="tbl-wrap">
+      <table id="wos-tbl">
+        <thead><tr>
+          <th onclick="sortTable('wos-tbl',0)">Parent SKU</th>
+          <th onclick="sortTable('wos-tbl',1)">Style / Color</th>
+          <th onclick="sortTable('wos-tbl',2)">On Hand</th>
+          <th onclick="sortTable('wos-tbl',3)">LA</th>
+          <th onclick="sortTable('wos-tbl',4)">Milwaukee</th>
+          <th onclick="sortTable('wos-tbl',5)">Velocity/wk</th>
+          <th onclick="sortTable('wos-tbl',6)">WOS</th>
+          <th onclick="sortTable('wos-tbl',7)">Streak</th>
+          <th onclick="sortTable('wos-tbl',8)">Status</th>
+        </tr></thead>
+        <tbody id="wos-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SECTION 8: SEASONAL VELOCITY WATCH ===================== -->
+<div class="section" id="sec8">
+  <div class="section-header" onclick="toggleSection('sec8')">
+    <div class="section-title"><span class="section-num">08</span> Seasonal Velocity Watch</div>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body" id="sec8-body">
+    <div class="alert-banner yellow">
+      <span class="alert-icon">📅</span>
+      <div><strong>NV-BL5 (Nova 2.0 Black) Seasonal Note:</strong> Currently in active tracking period (Sep–Apr). NV-BL5 should be excluded beginning May 2026. IMP will flag for your confirmation before the May exclusion window opens.</div>
+    </div>
+    <div style="margin-top: 14px;">
+      <div class="alert-banner blue">
+        <span class="alert-icon">ℹ️</span>
+        <div><strong>Seasonal context for March:</strong> March is typically a mid-season transition month — safety boot demand tends to be steady through April. Recommend placing Mexico supplemental PO and China PO now before any spring slowdown. Gravity and Valence are in peak demand season — their CRITICAL status this week is urgent.</div>
+      </div>
+    </div>
+    <div style="margin-top: 14px; color: var(--text-dim); font-size: 12px;">
+      Full month-over-month comparison requires weekly Forecast Data upload (Sales MTD vs. prior year). Upload the Forecast Data file alongside next week's snapshot for complete seasonal velocity analysis.
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SECTION 9: DATA ANOMALY FLAGS ===================== -->
+<div class="section" id="sec9">
+  <div class="section-header" onclick="toggleSection('sec9')">
+    <div class="section-title"><span class="section-num">09</span> Data Anomaly Flags</div>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body" id="sec9-body">
+    <div class="alert-banner yellow">
+      <span class="alert-icon">❓</span>
+      <div><strong>Inv_021225.xlsx — Date Confirmation Required:</strong> The supplier finished goods file is named "Inv_021225" which could mean Feb 12, 2025 OR Dec 21, 2025. Please confirm the actual date of this file before using it for add-on analysis. If it's from early 2025, the available quantities may no longer be accurate.</div>
+    </div>
+    <div style="margin-top: 10px;">
+      <div class="alert-banner yellow">
+        <span class="alert-icon">❓</span>
+        <div><strong>GR-AM3 (Gravity Amber) — Active Status Unconfirmed:</strong> GR-AM3 shows 184 units on hand across 17 active sizes but $0 inventory value (cost basis missing). All 17 sizes flagged as slow-movers (100%). Please confirm if GR-AM3 is an active, live product.</div>
+      </div>
+    </div>
+    <div style="margin-top: 10px;">
+      <div class="alert-banner blue">
+        <span class="alert-icon">ℹ️</span>
+        <div><strong>OM-VB2 Suppression Active:</strong> Omega Vegan Brown v2 remains suppressed until May 2026. IMP will flag for review when session date reaches May 2026.</div>
+      </div>
+    </div>
+    <div style="margin-top: 10px;">
+      <div class="alert-banner blue">
+        <span class="alert-icon">ℹ️</span>
+        <div><strong>Sold Qty = 0 in All Snapshots:</strong> All uploaded stock snapshots (Sep 2025 – Mar 2026) show Sold Qty = 0. This suggests the snapshots are point-in-time inventory exports, not activity period reports. Velocity in this dashboard is estimated from month-over-month on-hand changes. Upload weekly Forecast Data for accurate velocity calculations.</div>
+      </div>
+    </div>
+    <div style="margin-top: 10px;">
+      <div class="alert-banner blue">
+        <span class="alert-icon">ℹ️</span>
+        <div><strong>GR-090W-BL3, VA-075-CB2 — Negative On-Hand:</strong> These 2 SKUs show negative on-hand (-1), likely due to a return/exchange adjustment or data timing. Excluded from reorder calculations.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SECTION 10: PRIORITY ACTION LIST ===================== -->
+<div class="section" id="sec10">
+  <div class="section-header" onclick="toggleSection('sec10')">
+    <div class="section-title"><span class="section-num">10</span> Priority Action List</div>
+    <span class="section-toggle">▼</span>
+  </div>
+  <div class="section-body" id="sec10-body">
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>#</th>
+          <th>Priority</th>
+          <th>Action</th>
+          <th>Detail</th>
+          <th>Deadline</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="mono">1</td>
+            <td><span class="badge badge-critical">P1 CRITICAL</span></td>
+            <td>Place Mexico Supplemental PO</td>
+            <td>32 uncovered SKUs, ~419 pairs, ~$13K. Valence v2 Black/CB, Omega Bourbon, Gravity Black, Spice MD2 all CRITICAL.</td>
+            <td class="red">Immediately</td>
+          </tr>
+          <tr>
+            <td class="mono">2</td>
+            <td><span class="badge badge-critical">P1 CRITICAL</span></td>
+            <td>Place China PO (Astra Soft-Toe)</td>
+            <td>9 SKUs below reorder point. ASL-SO-060-BL1 at 1.7 WOS. 13-week lead time — every week of delay matters.</td>
+            <td class="red">This week</td>
+          </tr>
+          <tr>
+            <td class="mono">3</td>
+            <td><span class="badge badge-caution">P2 URGENT</span></td>
+            <td>Decide: Fusion v2 Black (FN-BL2) liquidation</td>
+            <td>89% of sizes slow, 6-month streak, $17.6K at risk. Recommend markdown or liquidation channel.</td>
+            <td class="orange">This week</td>
+          </tr>
+          <tr>
+            <td class="mono">4</td>
+            <td><span class="badge badge-caution">P2 URGENT</span></td>
+            <td>Decide: Rogue Black (RO-BL1) + Rogue Soft (RO-SO-BL1/WH1) strategy</td>
+            <td>All 3 Rogue variants at 6-month Disc. Candidate status. Consider full Rogue line discontinuation.</td>
+            <td class="orange">This week</td>
+          </tr>
+          <tr>
+            <td class="mono">5</td>
+            <td><span class="badge badge-watchelev">P2</span></td>
+            <td>Decide: Spice Dark Lava (SP-AU2) + Spice Mystic Dune (SP-MD2)</td>
+            <td>Both at 6 months. 70%/61% of sizes slow. $11.3K + $8.6K at risk combined.</td>
+            <td class="yellow">Within 2 weeks</td>
+          </tr>
+          <tr>
+            <td class="mono">6</td>
+            <td><span class="badge badge-watchelev">P2</span></td>
+            <td>Decide: Luna Brown/Black (LN-BB1)</td>
+            <td>5-month streak, 69% slow, highest at-risk value ($20K). Seasonal product — check if Q4 demand expected.</td>
+            <td class="yellow">Within 2 weeks</td>
+          </tr>
+          <tr>
+            <td class="mono">7</td>
+            <td><span class="badge badge-watch">P3</span></td>
+            <td>Confirm Inv_021225.xlsx date</td>
+            <td>Is supplier file from Feb 2025 or Dec 2025? Determines if the available quantities are actionable for add-on analysis.</td>
+            <td>This week</td>
+          </tr>
+          <tr>
+            <td class="mono">8</td>
+            <td><span class="badge badge-watch">P3</span></td>
+            <td>Confirm GR-AM3 (Gravity Amber) live status</td>
+            <td>184 units on hand, $0 cost basis, 100% slow. Confirm if active product before escalating discontinuation.</td>
+            <td>This week</td>
+          </tr>
+          <tr>
+            <td class="mono">9</td>
+            <td><span class="badge badge-pipeline">P3</span></td>
+            <td>Monitor PO-0068 arrival</td>
+            <td>Expected ~Apr 14. Confirm receipt via on-hand increase in next 2 snapshots. 4 SKUs still need attention post-arrival.</td>
+            <td>Apr 14 check</td>
+          </tr>
+          <tr>
+            <td class="mono">10</td>
+            <td><span class="badge badge-pipeline">P4</span></td>
+            <td>Upload weekly Forecast Data</td>
+            <td>Velocity calculations in this dashboard use on-hand change estimates. Forecast Data provides accurate 90/180/365-day velocity.</td>
+            <td>Next session</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div><!-- end container -->
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const PARENTS = [{"parent":"ASL-BL1","product_family":"Astra Comp Toe Black","prefix":"ASL","is_china":true,"total_on_hand":3234,"total_la":3093,"total_mil":141,"total_value":95007.6,"total_velocity":21.74,"total_po_qty":0,"n_slow":0,"n_active":12,"n_total":12,"max_streak":0,"n_critical":0,"n_low":0,"n_disc_candidate":0,"parent_wos":148.8,"slow_pct":0.0,"proj_wos":148.8,"status":"OVERSTOCKED","disc_flag":"","parent_wos_r":148.8},
+{"parent":"ASL-SO-BL1","product_family":"Astra Soft Toe Black","prefix":"ASL","is_china":true,"total_on_hand":87,"total_la":79,"total_mil":8,"total_value":4060.1,"total_velocity":8.54,"total_po_qty":0,"n_slow":0,"n_active":10,"n_total":10,"max_streak":0,"n_critical":2,"n_low":3,"n_disc_candidate":0,"parent_wos":10.2,"slow_pct":0.0,"proj_wos":10.2,"status":"HEALTHY","disc_flag":"","parent_wos_r":10.2},
+{"parent":"ASL-SO-WH1","product_family":"Astra Soft Toe White","prefix":"ASL","is_china":true,"total_on_hand":66,"total_la":66,"total_mil":0,"total_value":2640.0,"total_velocity":3.36,"total_po_qty":0,"n_slow":0,"n_active":9,"n_total":9,"max_streak":0,"n_critical":0,"n_low":2,"n_disc_candidate":0,"parent_wos":19.6,"slow_pct":0.0,"proj_wos":19.6,"status":"WATCH","disc_flag":"","parent_wos_r":19.6},
+{"parent":"ASL-WH1","product_family":"Astra Comp Toe White","prefix":"ASL","is_china":true,"total_on_hand":1523,"total_la":1445,"total_mil":78,"total_value":45036.7,"total_velocity":5.91,"total_po_qty":0,"n_slow":8,"n_active":11,"n_total":11,"max_streak":2,"n_critical":0,"n_low":0,"n_disc_candidate":0,"parent_wos":257.7,"slow_pct":72.7,"proj_wos":257.7,"status":"OVERSTOCKED","disc_flag":"WATCH","parent_wos_r":257.7},
+{"parent":"FN-BL2","product_family":"Fusion (v2) Black","prefix":"FN","is_china":false,"total_on_hand":261,"total_la":0,"total_mil":261,"total_value":17621.0,"total_velocity":1.62,"total_po_qty":0,"n_slow":17,"n_active":19,"n_total":19,"max_streak":6,"n_critical":0,"n_low":0,"n_disc_candidate":17,"parent_wos":161.1,"slow_pct":89.5,"proj_wos":161.1,"status":"OVERSTOCKED","disc_flag":"DISCONTINUATION CANDIDATE","parent_wos_r":161.1},
+{"parent":"GR-AM3","product_family":"Gravity Amber","prefix":"GR","is_china":false,"total_on_hand":184,"total_la":0,"total_mil":184,"total_value":0.0,"total_velocity":0.0,"total_po_qty":0,"n_slow":17,"n_active":17,"n_total":17,"max_streak":1,"n_critical":0,"n_low":0,"n_disc_candidate":0,"parent_wos":999,"slow_pct":100.0,"proj_wos":999,"status":"OVERSTOCKED","disc_flag":"WATCH","parent_wos_r":999},
+{"parent":"GR-BL3","product_family":"Gravity Black","prefix":"GR","is_china":false,"total_on_hand":222,"total_la":0,"total_mil":222,"total_value":13318.8,"total_velocity":22.03,"total_po_qty":216,"n_slow":0,"n_active":15,"n_total":15,"max_streak":0,"n_critical":5,"n_low":5,"n_disc_candidate":0,"parent_wos":10.1,"slow_pct":0.0,"proj_wos":19.9,"status":"HEALTHY","disc_flag":"","parent_wos_r":10.1},
+{"parent":"GR-BT1","product_family":"Gravity Vegan Blackout","prefix":"GR","is_china":false,"total_on_hand":3,"total_la":0,"total_mil":3,"total_value":150.6,"total_velocity":0.52,"total_po_qty":0,"n_slow":3,"n_active":3,"n_total":3,"max_streak":0,"n_critical":0,"n_low":0,"n_disc_candidate":0,"parent_wos":5.8,"slow_pct":100.0,"proj_wos":5.8,"status":"LOW","disc_flag":"WATCH","parent_wos_r":5.8},
+{"parent":"HZ-BL1","product_family":"Horizon Black","prefix":"HZ","is_china":false,"total_on_hand":126,"total_la":0,"total_mil":126,"total_value":7765.8,"total_velocity":6.14,"total_po_qty":24,"n_slow":9,"n_active":13,"n_total":13,"max_streak":4,"n_critical":3,"n_low":0,"n_disc_candidate":9,"parent_wos":20.5,"slow_pct":69.2,"proj_wos":24.4,"status":"OVERSTOCKED","disc_flag":"DISCONTINUATION CANDIDATE","parent_wos_r":20.5},
+{"parent":"HZ-TN1","product_family":"Horizon Tan","prefix":"HZ","is_china":false,"total_on_hand":52,"total_la":0,"total_mil":52,"total_value":3107.8,"total_velocity":3.99,"total_po_qty":52,"n_slow":3,"n_active":6,"n_total":6,"max_streak":2,"n_critical":2,"n_low":2,"n_disc_candidate":0,"parent_wos":13.0,"slow_pct":50.0,"proj_wos":26.1,"status":"HEALTHY","disc_flag":"","parent_wos_r":13.0},
+{"parent":"IN-BL1","product_family":"Insole Black","prefix":"IN","is_china":false,"total_on_hand":207,"total_la":207,"total_mil":0,"total_value":0.0,"total_velocity":0.0,"total_po_qty":0,"n_slow":0,"n_active":5,"n_total":5,"max_streak":0,"n_critical":0,"n_low":0,"n_disc_candidate":0,"parent_wos":999,"slow_pct":0.0,"proj_wos":999,"status":"OVERSTOCKED","disc_flag":"","parent_wos_r":999},
+{"parent":"IN-DT1","product_family":"Insole Dual Tone","prefix":"IN","is_china":false,"total_on_hand":78,"total_la":78,"total_mil":0,"total_value":0.0,"total_velocity":0.0,"total_po_qty":0,"n_slow":0,"n_active":4,"n_total":4,"max_streak":0,"n_critical":0,"n_low":0,"n_disc_candidate":0,"parent_wos":999,"slow_pct":0.0,"proj_wos":999,"status":"OVERSTOCKED","disc_flag":"","parent_wos_r":999},
+{"parent":"LN-BB1","product_family":"Luna Comp Toe Brown / Black","prefix":"LN","is_china":true,"total_on_hand":682,"total_la":596,"total_mil":86,"total_value":19983.6,"total_velocity":3.87,"total_po_qty":0,"n_slow":9,"n_active":13,"n_total":13,"max_streak":5,"n_critical":0,"n_low":0,"n_disc_candidate":9,"parent_wos":176.2,"slow_pct":69.2,"proj_wos":176.2,"status":"OVERSTOCKED","disc_flag":"DISCONTINUATION CANDIDATE","parent_wos_r":176.2},
+{"parent":"LN-BL1","product_family":"Luna Comp Toe Black","prefix":"LN","is_china":true,"total_on_hand":0,"total_la":0,"total_mil":0,"total_value":0.0,"total_velocity":0.0,"total_po_qty":0,"n_slow":0,"n_active":0,"n_total":11,"max_streak":0,"n_critical":0,"n_low":0,"n_disc_candidate":0,"parent_wos":0,"slow_pct":0.0,"proj_wos":0,"status":"ZERO STOCK","disc_flag":"","parent_wos_r":0},
+{"parent":"NV-BL3","product_family":"Nova Black v3","prefix":"NV","is_china":false,"total_on_hand":0,"total_la":0,"total_mil":0,"total_value":0.0,"total_velocity":0.0,"total_po_qty":0,"n_slow":0,"n_active":0,"n_total":11,"max_streak":0,"n_critical":0,"n_low":0,"n_disc_candidate":0,"parent_wos":0,"slow_pct":0.0,"proj_wos":0,"status":"ZERO STOCK","disc_flag":"","parent_wos_r":0},
+{"parent":"NV-BL4","product_family":"Nova Black v4","prefix":"NV","is_china":false,"total_on_hand":0,"total_la":0,"total_mil":0,"total_value":0.0,"total_velocity":0.0,"total_po_qty":0,"n_slow":0,"n_active":0,"n_total":11,"max_streak":0,"n_critical":0,"n_low":0,"n_disc_candidate":0,"parent_wos":0,"slow_pct":0.0,"proj_wos":0,"status":"ZERO STOCK","disc_flag":"","parent_wos_r":0},
+{"parent":"NV-BL5","product_family":"Nova 2.0 (v2) Black","prefix":"NV","is_china":false,"total_on_hand":68,"total_la":0,"total_mil":68,"total_value":4810.0,"total_velocity":3.35,"total_po_qty":0,"n_slow":13,"n_active":18,"n_total":18,"max_streak":5,"n_critical":0,"n_low":1,"n_disc_candidate":13,"parent_wos":20.3,"slow_pct":72.2,"proj_wos":20.3,"status":"OVERSTOCKED","disc_flag":"DISCONTINUATION CANDIDATE","parent_wos_r":20.3},
+{"parent":"NV-CB1","product_family":"Nova Chestnut Brown v1","prefix":"NV","is_china":false,"total_on_hand":0,"total_la":0,"total_mil":0,"total_value":0.0,"total_velocity":0.0,"total_po_qty":0,"n_slow":0,"n_active":0,"n_total":11,"max_streak":0,"n_critical":0,"n_low":0,"n_disc_candidate":0,"parent_wos":0,"slow_pct":0.0,"proj_wos":0,"status":"ZERO STOCK","disc_flag":"","parent_wos_r":0},
+{"parent":"NV-CB2","product_family":"Nova Chestnut Brown v2","prefix":"NV","is_china":false,"total_on_hand":0,"total_la":0,"total_mil":0,"total_value":0.0,"total_velocity":0.0,"total_po_qty":0,"n_slow":0,"n_active":0,"n_total":11,"max_streak":0,"n_critical":0,"n_low":0,"n_disc_candidate":0,"parent_wos":0,"slow_pct":0.0,"proj_wos":0,"status":"ZERO STOCK","disc_flag":"","parent_wos_r":0},
+{"parent":"OM-BL2","product_family":"Omega (v2) Black","prefix":"OM","is_china":false,"total_on_hand":467,"total_la":0,"total_mil":467,"total_value":27114.0,"total_velocity":14.02,"total_po_qty":20,"n_slow":0,"n_active":17,"n_total":17,"max_streak":0,"n_critical":0,"n_low":1,"n_disc_candidate":0,"parent_wos":33.3,"slow_pct":0.0,"proj_wos":34.7,"status":"OVERSTOCKED","disc_flag":"","parent_wos_r":33.3},
+{"parent":"OM-BO2","product_family":"Omega (v2) Bourbon","prefix":"OM","is_china":false,"total_on_hand":105,"total_la":0,"total_mil":105,"total_value":6090.0,"total_velocity":8.59,"total_po_qty":60,"n_slow":0,"n_active":15,"n_total":15,"max_streak":0,"n_critical":3,"n_low":5,"n_disc_candidate":0,"parent_wos":12.2,"slow_pct":0.0,"proj_wos":19.2,"status":"HEALTHY","disc_flag":"","parent_wos_r":12.2},
+{"parent":"OM-GY1","product_family":"Omega Vegan Gray","prefix":"OM","is_china":false,"total_on_hand":109,"total_la":0,"total_mil":109,"total_value":5035.8,"total_velocity":2.93,"total_po_qty":0,"n_slow":6,"n_active":14,"n_total":14,"max_streak":3,"n_critical":0,"n_low":2,"n_disc_candidate":0,"parent_wos":37.2,"slow_pct":42.9,"proj_wos":37.2,"status":"OVERSTOCKED","disc_flag":"","parent_wos_r":37.2},
+{"parent":"RO-BL1","product_family":"Rogue Black","prefix":"RO","is_china":false,"total_on_hand":190,"total_la":0,"total_mil":190,"total_value":10864.0,"total_velocity":1.87,"total_po_qty":0,"n_slow":10,"n_active":12,"n_total":12,"max_streak":6,"n_critical":0,"n_low":0,"n_disc_candidate":10,"parent_wos":101.6,"slow_pct":83.3,"proj_wos":101.6,"status":"OVERSTOCKED","disc_flag":"DISCONTINUATION CANDIDATE","parent_wos_r":101.6},
+{"parent":"RO-SO-BL1","product_family":"Rogue (Soft) Black","prefix":"RO","is_china":false,"total_on_hand":25,"total_la":0,"total_mil":25,"total_value":1352.0,"total_velocity":0.74,"total_po_qty":0,"n_slow":7,"n_active":8,"n_total":8,"max_streak":6,"n_critical":0,"n_low":1,"n_disc_candidate":7,"parent_wos":33.8,"slow_pct":87.5,"proj_wos":33.8,"status":"OVERSTOCKED","disc_flag":"DISCONTINUATION CANDIDATE","parent_wos_r":33.8},
+{"parent":"RO-SO-WH1","product_family":"Rogue (Soft) White","prefix":"RO","is_china":false,"total_on_hand":60,"total_la":0,"total_mil":60,"total_value":3224.0,"total_velocity":2.02,"total_po_qty":0,"n_slow":9,"n_active":11,"n_total":11,"max_streak":6,"n_critical":0,"n_low":0,"n_disc_candidate":9,"parent_wos":29.7,"slow_pct":81.8,"proj_wos":29.7,"status":"OVERSTOCKED","disc_flag":"DISCONTINUATION CANDIDATE","parent_wos_r":29.7},
+{"parent":"RO-WH1","product_family":"Rogue White","prefix":"RO","is_china":false,"total_on_hand":99,"total_la":0,"total_mil":99,"total_value":5603.4,"total_velocity":8.6,"total_po_qty":68,"n_slow":0,"n_active":12,"n_total":12,"max_streak":0,"n_critical":1,"n_low":3,"n_disc_candidate":0,"parent_wos":11.5,"slow_pct":0.0,"proj_wos":19.4,"status":"HEALTHY","disc_flag":"","parent_wos_r":11.5},
+{"parent":"SP-AU2","product_family":"Spice (v2) Dark Lava","prefix":"SP","is_china":false,"total_on_hand":179,"total_la":0,"total_mil":179,"total_value":11284.0,"total_velocity":2.18,"total_po_qty":60,"n_slow":12,"n_active":17,"n_total":17,"max_streak":6,"n_critical":0,"n_low":1,"n_disc_candidate":12,"parent_wos":82.1,"slow_pct":70.6,"proj_wos":109.6,"status":"OVERSTOCKED","disc_flag":"DISCONTINUATION CANDIDATE","parent_wos_r":82.1},
+{"parent":"SP-BL2","product_family":"Spice (v2) Black","prefix":"SP","is_china":false,"total_on_hand":289,"total_la":0,"total_mil":289,"total_value":17918.0,"total_velocity":6.76,"total_po_qty":136,"n_slow":4,"n_active":18,"n_total":18,"max_streak":2,"n_critical":0,"n_low":2,"n_disc_candidate":0,"parent_wos":42.8,"slow_pct":22.2,"proj_wos":62.9,"status":"OVERSTOCKED","disc_flag":"","parent_wos_r":42.8},
+{"parent":"SP-MD2","product_family":"Spice (v2) Mystic Dune","prefix":"SP","is_china":false,"total_on_hand":139,"total_la":0,"total_mil":139,"total_value":8618.0,"total_velocity":2.64,"total_po_qty":24,"n_slow":11,"n_active":18,"n_total":18,"max_streak":6,"n_critical":1,"n_low":3,"n_disc_candidate":11,"parent_wos":52.7,"slow_pct":61.1,"proj_wos":61.8,"status":"OVERSTOCKED","disc_flag":"DISCONTINUATION CANDIDATE","parent_wos_r":52.7},
+{"parent":"VA-BL2","product_family":"Valence (v2) Vegan Black","prefix":"VA","is_china":false,"total_on_hand":167,"total_la":0,"total_mil":167,"total_value":9693.0,"total_velocity":15.15,"total_po_qty":32,"n_slow":0,"n_active":17,"n_total":17,"max_streak":0,"n_critical":7,"n_low":4,"n_disc_candidate":0,"parent_wos":11.0,"slow_pct":0.0,"proj_wos":13.1,"status":"HEALTHY","disc_flag":"","parent_wos_r":11.0},
+{"parent":"VA-CB2","product_family":"Valence (v2) Chestnut Brown","prefix":"VA","is_china":false,"total_on_hand":139,"total_la":0,"total_mil":139,"total_value":10480.5,"total_velocity":8.27,"total_po_qty":76,"n_slow":0,"n_active":16,"n_total":16,"max_streak":0,"n_critical":4,"n_low":4,"n_disc_candidate":0,"parent_wos":16.8,"slow_pct":0.0,"proj_wos":26.0,"status":"WATCH","disc_flag":"","parent_wos_r":16.8}];
+
+const CHINA_REORDER = [
+  {sku:"ASL-SO-060-BL1",product:"Astra Soft Toe Black 6",on_hand:2,wos:1.7,reorder_point:17.3,order_qty:28,avg_cost:40.0,status:"CRITICAL"},
+  {sku:"ASL-SO-050-BL1",product:"Astra Soft Toe Black 5",on_hand:5,wos:6.0,reorder_point:12.6,order_qty:17,avg_cost:40.0,status:"LOW"},
+  {sku:"ASL-SO-095-BL1",product:"Astra Soft Toe Black 9.5",on_hand:9,wos:4.8,reorder_point:28.2,order_qty:40,avg_cost:40.0,status:"LOW"},
+  {sku:"ASL-SO-075-BL1",product:"Astra Soft Toe Black 7.5",on_hand:29,wos:12.1,reorder_point:30.5,order_qty:33,avg_cost:40.0,status:"HEALTHY"},
+  {sku:"ASL-SO-090-BL1",product:"Astra Soft Toe Black 9",on_hand:16,wos:9.0,reorder_point:30.5,order_qty:30,avg_cost:40.0,status:"HEALTHY"},
+  {sku:"ASL-SO-070-WH1",product:"Astra Soft Toe White 7",on_hand:15,wos:14.4,reorder_point:16.3,order_qty:12,avg_cost:40.0,status:"HEALTHY"},
+  {sku:"ASL-SO-080-WH1",product:"Astra Soft Toe White 8",on_hand:15,wos:11.0,reorder_point:18.3,order_qty:20,avg_cost:40.0,status:"HEALTHY"},
+  {sku:"ASL-SO-090-WH1",product:"Astra Soft Toe White 9",on_hand:4,wos:9.6,reorder_point:10.7,order_qty:7,avg_cost:40.0,status:"HEALTHY"},
+  {sku:"ASL-SO-060-WH1",product:"Astra Soft Toe White 6",on_hand:1,wos:4.8,reorder_point:3.1,order_qty:6,avg_cost:40.0,status:"LOW"},
+];
+
+const MEX_REORDER = [
+  {sku:"VA-085-BL2",product:"Valence (v2) Vegan Black 8.5",on_hand:2,wos:0.9,order_qty:33,avg_cost:27.0,status:"CRITICAL",in_supplier:false},
+  {sku:"VA-060-BL2",product:"Valence (v2) Vegan Black 6",on_hand:1,wos:1.1,order_qty:14,avg_cost:27.0,status:"CRITICAL",in_supplier:false},
+  {sku:"VA-080-CB2",product:"Valence (v2) Chestnut Brown 8",on_hand:2,wos:1.4,order_qty:21,avg_cost:31.5,status:"CRITICAL",in_supplier:false},
+  {sku:"SP-090W-AU2",product:"Spice (v2) Dark Lava 9W",on_hand:1,wos:1.4,order_qty:6,avg_cost:62.0,status:"CRITICAL",in_supplier:false},
+  {sku:"GR-060-BL3",product:"Gravity Black 6",on_hand:2,wos:1.5,order_qty:20,avg_cost:30.1,status:"CRITICAL",in_supplier:true},
+  {sku:"VA-080-BL2",product:"Valence (v2) Vegan Black 8",on_hand:4,wos:1.6,order_qty:36,avg_cost:27.0,status:"CRITICAL",in_supplier:false},
+  {sku:"VA-070W-CB2",product:"Valence (v2) Chestnut Brown 7W",on_hand:1,wos:1.9,order_qty:7,avg_cost:31.5,status:"CRITICAL",in_supplier:false},
+  {sku:"SP-065-MD2",product:"Spice (v2) Mystic Dune 6.5",on_hand:1,wos:1.9,order_qty:7,avg_cost:31.0,status:"CRITICAL",in_supplier:false},
+  {sku:"GR-095-BL3",product:"Gravity Black 9.5",on_hand:3,wos:2.2,order_qty:19,avg_cost:30.1,status:"CRITICAL",in_supplier:true},
+  {sku:"VA-075-BL2",product:"Valence (v2) Vegan Black 7.5",on_hand:3,wos:2.2,order_qty:19,avg_cost:27.0,status:"CRITICAL",in_supplier:false},
+  {sku:"OM-085W-BO2",product:"Omega (v2) Bourbon 8.5W",on_hand:2,wos:2.4,order_qty:11,avg_cost:29.0,status:"CRITICAL",in_supplier:false},
+  {sku:"OM-070-BO2",product:"Omega (v2) Bourbon 7",on_hand:4,wos:3.2,order_qty:16,avg_cost:29.0,status:"CRITICAL",in_supplier:false},
+  {sku:"RO-SO-075-WH1",product:"Rogue (Soft) White 7.5",on_hand:1,wos:3.2,order_qty:6,avg_cost:26.0,status:"CRITICAL",in_supplier:false},
+  {sku:"VA-100-CB2",product:"Valence (v2) Chestnut Brown 10",on_hand:2,wos:2.1,order_qty:13,avg_cost:31.5,status:"CRITICAL",in_supplier:false},
+  {sku:"OM-100-BO2",product:"Omega (v2) Bourbon 10",on_hand:2,wos:1.7,order_qty:16,avg_cost:29.0,status:"CRITICAL",in_supplier:false},
+  {sku:"VA-060-CB2",product:"Valence (v2) Chestnut Brown 6",on_hand:3,wos:4.1,order_qty:6,avg_cost:63.0,status:"LOW",in_supplier:false},
+  {sku:"VA-110-BL2",product:"Valence (v2) Vegan Black 11",on_hand:3,wos:4.1,order_qty:9,avg_cost:27.0,status:"LOW",in_supplier:false},
+  {sku:"GR-070-BL3",product:"Gravity Black 7",on_hand:7,wos:4.2,order_qty:20,avg_cost:30.1,status:"LOW",in_supplier:false},
+  {sku:"SP-060-MD2",product:"Spice (v2) Mystic Dune 6",on_hand:4,wos:6.4,order_qty:6,avg_cost:62.0,status:"LOW",in_supplier:false},
+  {sku:"OM-075W-GY1",product:"Omega Vegan Gray 7.5W",on_hand:2,wos:6.4,order_qty:6,avg_cost:46.2,status:"LOW",in_supplier:false},
+  {sku:"OM-095W-BO2",product:"Omega (v2) Bourbon 9.5W",on_hand:4,wos:6.4,order_qty:6,avg_cost:58.0,status:"LOW",in_supplier:false},
+  {sku:"VA-090W-BL2",product:"Valence (v2) Vegan Black 9W",on_hand:6,wos:6.4,order_qty:9,avg_cost:27.0,status:"LOW",in_supplier:false},
+  {sku:"VA-100-BL2",product:"Valence (v2) Vegan Black 10",on_hand:6,wos:6.4,order_qty:9,avg_cost:27.0,status:"LOW",in_supplier:false},
+  {sku:"OM-065-BL2",product:"Omega (v2) Black 6.5",on_hand:13,wos:5.9,order_qty:22,avg_cost:29.0,status:"LOW",in_supplier:false},
+  {sku:"OM-120-BL2",product:"Omega (v2) Black 12",on_hand:6,wos:7.2,order_qty:7,avg_cost:58.0,status:"LOW",in_supplier:false},
+  {sku:"OM-075W-BO2",product:"Omega (v2) Bourbon 7.5W",on_hand:3,wos:7.2,order_qty:6,avg_cost:58.0,status:"LOW",in_supplier:false},
+  {sku:"GR-095W-BL3",product:"Gravity Black 9.5W",on_hand:3,wos:7.2,order_qty:6,avg_cost:30.1,status:"LOW",in_supplier:true},
+  {sku:"OM-095-BO2",product:"Omega (v2) Bourbon 9.5",on_hand:7,wos:5.6,order_qty:13,avg_cost:29.0,status:"LOW",in_supplier:false},
+  {sku:"OM-080W-BO2",product:"Omega (v2) Bourbon 8W",on_hand:5,wos:8.0,order_qty:6,avg_cost:29.0,status:"LOW",in_supplier:false},
+  {sku:"VA-090-BL2",product:"Valence (v2) Vegan Black 9",on_hand:9,wos:4.8,order_qty:21,avg_cost:27.0,status:"LOW",in_supplier:false},
+  {sku:"VA-090-CB2",product:"Valence (v2) Chestnut Brown 9",on_hand:8,wos:7.0,order_qty:10,avg_cost:31.5,status:"LOW",in_supplier:false},
+  {sku:"VA-095-CB2",product:"Valence (v2) Chestnut Brown 9.5",on_hand:5,wos:5.3,order_qty:10,avg_cost:31.5,status:"LOW",in_supplier:false},
+  {sku:"SP-070-MD2",product:"Spice (v2) Mystic Dune 7",on_hand:4,wos:4.8,order_qty:9,avg_cost:31.0,status:"LOW",in_supplier:false},
+  {sku:"NV-085-BL5",product:"Nova 2.0 Black 8.5",on_hand:2,wos:4.8,order_qty:6,avg_cost:34.0,status:"LOW",in_supplier:false},
+];
+
+const PO_CHECK = [
+  {sku:"GR-075-BL3",product:"Gravity Black 7.5",on_hand:3,po_qty:20,wos:1.6,proj_wos:12.2,action:"Yes — still LOW post-PO"},
+  {sku:"GR-080-BL3",product:"Gravity Black 8",on_hand:15,po_qty:20,wos:6.8,proj_wos:16.0,action:"Monitor — barely HEALTHY"},
+  {sku:"RO-070-WH1",product:"Rogue White 7",on_hand:7,po_qty:12,wos:5.6,proj_wos:15.2,action:"Monitor — barely HEALTHY"},
+  {sku:"OM-075-BL2",product:"Omega (v2) Black 7.5",on_hand:14,po_qty:20,wos:4.6,proj_wos:11.2,action:"Yes — still LOW post-PO"},
+];
+
+const SLOW_PARENTS = PARENTS.filter(p => p.n_slow > 0 && p.total_on_hand > 0).sort((a,b) => b.total_value - a.total_value);
+
+const MONTHS = ['2025-09-30','2025-10-31','2025-11-30','2025-12-31','2026-01-31','2026-02-28','2026-03-08'];
+const MONTH_LABELS = ['Sep \'25','Oct \'25','Nov \'25','Dec \'25','Jan \'26','Feb \'26','Mar 8 \'26'];
+
+// Monthly on-hand by parent (derived from data)
+const PARENT_MONTHLY = {
+  "FN-BL2": [null,355,355,286,286,261,261],
+  "LN-BB1": [596,700,1015,727,644,663,682],
+  "RO-BL1": [null,238,238,207,196,192,190],
+  "SP-AU2": [null,232,232,198,186,179,179],
+  "SP-MD2": [null,183,183,164,151,139,139],
+  "HZ-BL1": [null,161,161,143,132,126,126],
+  "NV-BL5": [83,100,100,86,76,68,68],
+  "RO-SO-WH1": [null,79,79,68,63,62,60],
+  "RO-SO-BL1": [null,32,32,27,27,25,25],
+  "OM-BL2": [611,520,742,600,441,595,467],
+  "VA-BL2": [null,null,null,null,null,200,167],
+  "GR-BL3": [null,260,308,248,239,222,222],
+  "ASL-BL1": [2847,3142,3219,3229,3253,3268,3234],
+};
+
+// ============================================================
+// UTILITY
+// ============================================================
+function statusBadge(s) {
+  const map = {
+    'CRITICAL':'badge-critical','LOW':'badge-low','HEALTHY':'badge-healthy',
+    'WATCH':'badge-watch','OVERSTOCKED':'badge-overstocked','ZERO STOCK':'badge-zero'
+  };
+  return `<span class="badge ${map[s]||'badge-zero'}">${s}</span>`;
+}
+
+function discBadge(f) {
+  if (!f) return '';
+  if (f.includes('DISCONTINUATION')) return `<span class="badge badge-disc">DISC. CANDIDATE</span>`;
+  if (f.includes('CAUTION')) return `<span class="badge badge-caution">CAUTION</span>`;
+  if (f === 'WATCH') return `<span class="badge badge-watch">WATCH</span>`;
+  return `<span class="badge badge-watchelev">${f}</span>`;
+}
+
+function wosColor(wos, isChina) {
+  if (wos == null || wos == 999 || wos <= 0) return 'dim';
+  if (wos < 4) return 'red';
+  if (wos < 8) return 'orange';
+  if (wos < 16) return 'green';
+  if (wos < (isChina ? 30 : 20)) return 'yellow';
+  return 'purple';
+}
+
+function wosBar(wos, isChina) {
+  const max = isChina ? 52 : 40;
+  const pct = Math.min(100, (wos / max) * 100);
+  const cls = wosColor(wos, isChina);
+  return `<div class="trend-bar-wrap"><div class="trend-bar-bg"><div class="trend-bar-fill ${cls}" style="width:${pct}%"></div></div><span style="font-family:var(--mono);font-size:11px" class="${cls}">${wos >= 999 ? '—' : wos.toFixed(1)}</span></div>`;
+}
+
+function fmtNum(n, dec=0) {
+  if (n == null || n == 999) return '—';
+  return n.toFixed(dec).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function fmtDollar(n) {
+  if (!n) return '—';
+  return '$' + n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+// ============================================================
+// SECTION TOGGLE
+// ============================================================
+function toggleSection(id) {
+  const header = document.querySelector(`#${id} .section-header`);
+  const body = document.getElementById(`${id}-body`);
+  header.classList.toggle('collapsed');
+  body.classList.toggle('hidden');
+}
+
+function expandAll() {
+  document.querySelectorAll('.section-header').forEach(h => h.classList.remove('collapsed'));
+  document.querySelectorAll('.section-body').forEach(b => b.classList.remove('hidden'));
+}
+
+function collapseAll() {
+  document.querySelectorAll('.section-header').forEach(h => h.classList.add('collapsed'));
+  document.querySelectorAll('.section-body').forEach(b => b.classList.add('hidden'));
+}
+
+function urgentOnly() {
+  collapseAll();
+  ['sec1','sec2','sec5','sec6','sec10'].forEach(id => {
+    document.querySelector(`#${id} .section-header`).classList.remove('collapsed');
+    document.getElementById(`${id}-body`).classList.remove('hidden');
+  });
+}
+
+// ============================================================
+// TABLE SORT
+// ============================================================
+function sortTable(tblId, colIdx) {
+  const tbl = document.getElementById(tblId);
+  if (!tbl) return;
+  const tbody = tbl.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr:not(.child-row)'));
+  const th = tbl.querySelectorAll('th')[colIdx];
+  const asc = th.classList.contains('sorted-asc');
+  tbl.querySelectorAll('th').forEach(t => t.classList.remove('sorted-asc','sorted-desc'));
+  th.classList.add(asc ? 'sorted-desc' : 'sorted-asc');
+  rows.sort((a, b) => {
+    const av = a.cells[colIdx]?.textContent.trim().replace(/[$,%]/g,'') || '';
+    const bv = b.cells[colIdx]?.textContent.trim().replace(/[$,%]/g,'') || '';
+    const an = parseFloat(av), bn = parseFloat(bv);
+    if (!isNaN(an) && !isNaN(bn)) return asc ? bn - an : an - bn;
+    return asc ? bv.localeCompare(av) : av.localeCompare(bv);
+  });
+  rows.forEach(r => {
+    tbody.appendChild(r);
+    const id = r.dataset.parentId;
+    if (id) {
+      document.querySelectorAll(`.child-row[data-parent="${id}"]`).forEach(c => tbody.appendChild(c));
+    }
+  });
+}
+
+// ============================================================
+// KPI VALUE TABLE
+// ============================================================
+function buildKpiValueTable() {
+  const tbody = document.getElementById('kpi-value-tbody');
+  const sorted = [...PARENTS].filter(p => p.total_on_hand > 0).sort((a,b) => b.total_value - a.total_value).slice(0,15);
+  tbody.innerHTML = sorted.map(p => `
+    <tr>
+      <td class="mono">${p.parent}</td>
+      <td>${p.product_family}</td>
+      <td class="num">${fmtNum(p.total_on_hand)}</td>
+      <td class="num">${fmtDollar(p.total_value)}</td>
+      <td>${wosBar(p.parent_wos, p.is_china)}</td>
+      <td>${statusBadge(p.status)}</td>
+    </tr>`).join('');
+}
+
+// ============================================================
+// LONGITUDINAL TREND TABLE
+// ============================================================
+function buildLongitudinalTables() {
+  // Top 5 streaks
+  const top5 = [...PARENTS].filter(p => p.max_streak > 0).sort((a,b) => b.max_streak - a.max_streak).slice(0,5);
+  document.getElementById('top5-streak-tbody').innerHTML = top5.map(p => `
+    <tr>
+      <td class="mono">${p.parent}</td>
+      <td>${p.product_family}</td>
+      <td class="num ${p.max_streak >= 4 ? 'red' : p.max_streak >= 3 ? 'orange' : 'yellow'}">${p.max_streak}</td>
+      <td class="num">${p.n_slow}</td>
+      <td class="num">${p.n_active}</td>
+      <td class="num ${p.slow_pct >= 60 ? 'red' : ''}">${p.slow_pct.toFixed(0)}%</td>
+      <td class="num">${fmtDollar(p.total_value)}</td>
+      <td>${discBadge(p.disc_flag)}</td>
+    </tr>`).join('');
+
+  // Monthly trend table - key families
+  const keyParents = ['FN-BL2','LN-BB1','RO-BL1','SP-AU2','SP-MD2','HZ-BL1','NV-BL5','OM-BL2','GR-BL3','VA-BL2'];
+  const trendRows = keyParents.map(pk => {
+    const p = PARENTS.find(x => x.parent === pk);
+    if (!p) return '';
+    const monthly = PARENT_MONTHLY[pk] || [];
+    const vals = MONTH_LABELS.map((_, i) => {
+      const v = monthly[i];
+      if (v == null) return '<td class="dim">—</td>';
+      return `<td class="num">${v}</td>`;
+    });
+    // Trend indicator
+    const last3 = monthly.filter(v => v != null).slice(-3);
+    let trend = '→';
+    if (last3.length >= 2) {
+      const diff = last3[last3.length-1] - last3[0];
+      if (diff < -20) trend = '↓';
+      else if (diff > 20) trend = '↑';
+    }
+    return `<tr>
+      <td class="mono">${p.parent}</td>
+      <td>${p.product_family}</td>
+      ${vals.join('')}
+      <td>${trend}</td>
+      <td>${discBadge(p.disc_flag)}</td>
+    </tr>`;
+  });
+  document.getElementById('trend-tbody').innerHTML = trendRows.join('');
+}
+
+// ============================================================
+// SLOW MOVER TABLE
+// ============================================================
+let slowFilter = 'all';
+
+function setSlowFilter(f) {
+  slowFilter = f;
+  document.querySelectorAll('.filter-btn[id^="fb-"]').forEach(b => b.classList.remove('active'));
+  document.getElementById(`fb-${f}`)?.classList.add('active');
+  renderSlowTable();
+}
+
+function filterSlowTable() { renderSlowTable(); }
+
+function renderSlowTable() {
+  const search = document.getElementById('slow-search').value.toLowerCase();
+  const tbody = document.getElementById('slow-tbody');
+  let parents = SLOW_PARENTS;
+  if (slowFilter === 'disc') parents = parents.filter(p => p.disc_flag && p.disc_flag.includes('DISCONTINUATION'));
+  if (slowFilter === 'caution') parents = parents.filter(p => p.disc_flag && p.disc_flag.includes('CAUTION'));
+  if (search) parents = parents.filter(p => p.parent.toLowerCase().includes(search) || p.product_family.toLowerCase().includes(search));
+  
+  tbody.innerHTML = parents.map(p => {
+    const id = p.parent.replace(/[^a-z0-9]/gi,'_');
+    return `
+      <tr class="parent-row" data-parent-id="${id}" onclick="toggleChildren('${id}', this)">
+        <td><span class="expand-arrow">▶</span><span class="mono">${p.parent}</span></td>
+        <td>${p.product_family}${p.disc_flag ? ' <span class="tag-new">!</span>' : ''}</td>
+        <td class="num ${p.n_slow > 0 ? 'red' : ''}">${p.n_slow}</td>
+        <td class="num">${p.n_active}</td>
+        <td class="num ${p.slow_pct >= 60 ? 'red' : p.slow_pct >= 40 ? 'orange' : ''}">${p.slow_pct.toFixed(0)}%</td>
+        <td class="num">${fmtNum(p.n_slow * (p.total_on_hand / Math.max(p.n_active,1)))}</td>
+        <td class="num ${p.total_value > 10000 ? 'red' : p.total_value > 5000 ? 'orange' : ''}">${fmtDollar(p.total_value)}</td>
+        <td class="num ${p.max_streak >= 4 ? 'red' : p.max_streak >= 3 ? 'orange' : 'yellow'}">${p.max_streak || 0}</td>
+        <td>${discBadge(p.disc_flag)}</td>
+      </tr>`;
+  }).join('');
+}
+
+function toggleChildren(parentId, row) {
+  row.classList.toggle('expanded');
+  document.querySelectorAll(`.child-row[data-parent="${parentId}"]`).forEach(r => r.classList.toggle('visible'));
+}
+
+// ============================================================
+// CHINA REORDER TABLE
+// ============================================================
+function buildChinaTable() {
+  const tbody = document.getElementById('china-tbody');
+  tbody.innerHTML = CHINA_REORDER.sort((a,b) => a.wos - b.wos).map(r => `
+    <tr>
+      <td class="mono">${r.sku}</td>
+      <td>${r.product}</td>
+      <td class="num">${r.on_hand}</td>
+      <td>${wosBar(r.wos, true)}</td>
+      <td class="num dim">${fmtNum(r.reorder_point, 1)}</td>
+      <td class="num orange">${r.order_qty}</td>
+      <td class="num">${fmtDollar(r.avg_cost)}</td>
+      <td class="num">${fmtDollar(r.order_qty * r.avg_cost)}</td>
+      <td>${statusBadge(r.status)}</td>
+    </tr>`).join('');
+  const totalPairs = CHINA_REORDER.reduce((s,r) => s + r.order_qty, 0);
+  const totalVal = CHINA_REORDER.reduce((s,r) => s + r.order_qty * r.avg_cost, 0);
+  document.getElementById('china-summary').innerHTML = `
+    <td colspan="5"><strong>TOTAL CHINA BATCH</strong></td>
+    <td class="num"><strong>${totalPairs} pairs</strong></td>
+    <td></td>
+    <td class="num"><strong>${fmtDollar(totalVal)}</strong></td>
+    <td></td>`;
+}
+
+// ============================================================
+// MEXICO REORDER TABLE
+// ============================================================
+function buildMexTable() {
+  const tbody = document.getElementById('mex-tbody');
+  tbody.innerHTML = MEX_REORDER.sort((a,b) => a.wos - b.wos).map(r => `
+    <tr>
+      <td class="mono">${r.sku}</td>
+      <td>${r.product}</td>
+      <td class="num">${r.on_hand}</td>
+      <td>${wosBar(r.wos, false)}</td>
+      <td class="num orange">${r.order_qty}</td>
+      <td class="num">${fmtDollar(r.avg_cost)}</td>
+      <td class="num">${fmtDollar(r.order_qty * r.avg_cost)}</td>
+      <td>${r.in_supplier ? '<span class="badge badge-pipeline">✓ AVAIL</span>' : '<span class="badge badge-zero">NOT IN FILE</span>'}</td>
+      <td>${statusBadge(r.status)}</td>
+    </tr>`).join('');
+  const totalPairs = MEX_REORDER.reduce((s,r) => s + r.order_qty, 0);
+  const totalVal = MEX_REORDER.reduce((s,r) => s + r.order_qty * r.avg_cost, 0);
+  document.getElementById('mex-summary').innerHTML = `
+    <td colspan="4"><strong>TOTAL MEXICO SUPPLEMENTAL BATCH</strong></td>
+    <td class="num"><strong>${totalPairs} pairs</strong></td>
+    <td></td>
+    <td class="num"><strong>${fmtDollar(totalVal)}</strong></td>
+    <td colspan="2"></td>`;
+  
+  document.getElementById('po-check-tbody').innerHTML = PO_CHECK.map(r => `
+    <tr>
+      <td class="mono">${r.sku}</td>
+      <td>${r.product}</td>
+      <td class="num">${r.on_hand}</td>
+      <td class="num">${r.po_qty} <span class="badge badge-pipeline">PO-0068</span></td>
+      <td>${wosBar(r.wos, false)}</td>
+      <td class="${r.proj_wos < 16 ? 'orange' : 'green'}" style="font-family:var(--mono);font-size:11px;">${r.proj_wos.toFixed(1)} wks</td>
+      <td class="${r.action.startsWith('Yes') ? 'orange' : 'dim'}">${r.action}</td>
+    </tr>`).join('');
+}
+
+// ============================================================
+// FULL WOS TABLE
+// ============================================================
+let wosFilter = 'all';
+
+function setWosFilter(f) {
+  wosFilter = f;
+  document.querySelectorAll('.filter-btn[id^="wfb-"]').forEach(b => b.classList.remove('active'));
+  document.getElementById(`wfb-${f}`)?.classList.add('active');
+  renderWosTable();
+}
+
+function filterWosTable() { renderWosTable(); }
+
+function renderWosTable() {
+  const search = document.getElementById('wos-search').value.toLowerCase();
+  const tbody = document.getElementById('wos-tbody');
+  let parents = [...PARENTS].filter(p => p.total_on_hand > 0).sort((a,b) => a.parent_wos - b.parent_wos);
+  if (wosFilter !== 'all') parents = parents.filter(p => p.status === wosFilter);
+  if (search) parents = parents.filter(p => p.parent.toLowerCase().includes(search) || p.product_family.toLowerCase().includes(search));
+  
+  tbody.innerHTML = parents.map(p => {
+    const id = p.parent.replace(/[^a-z0-9]/gi,'_');
+    const streakCls = p.max_streak >= 4 ? 'red' : p.max_streak >= 3 ? 'orange' : p.max_streak >= 2 ? 'yellow' : '';
+    return `
+      <tr class="parent-row" data-parent-id="${id}_w" onclick="toggleChildren('${id}_w', this)">
+        <td><span class="expand-arrow">▶</span><span class="mono">${p.parent}</span></td>
+        <td>${p.product_family}</td>
+        <td class="num">${fmtNum(p.total_on_hand)}</td>
+        <td class="num">${fmtNum(p.total_la)}</td>
+        <td class="num">${fmtNum(p.total_mil)}</td>
+        <td class="num dim">${fmtNum(p.total_velocity, 1)}</td>
+        <td>${wosBar(p.parent_wos, p.is_china)}</td>
+        <td class="num ${streakCls}">${p.max_streak || '—'}</td>
+        <td>${statusBadge(p.status)}</td>
+      </tr>`;
+  }).join('');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  buildKpiValueTable();
+  buildLongitudinalTables();
+  renderSlowTable();
+  buildChinaTable();
+  buildMexTable();
+  renderWosTable();
+  document.getElementById('fb-all').classList.add('active');
+  document.getElementById('wfb-all').classList.add('active');
+});
+</script>
+</body>
+</html>
